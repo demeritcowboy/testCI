@@ -72,7 +72,8 @@ jobs:
           git clone https://lab.civicrm.org/extensions/cdntaxreceipts.git
           cd cdntaxreceipts
           sed -e '39,45d' phpunit.mink.xml.dist > phpunit.mink.xml
-          sed -i -e 's/..\/..\/..\/..\/..\/..\/..\///' phpunit.mink.xml
+          cat phpunit.mink.xml
+          pwd      
       - name: Run PHPUnit
         run: |
           mkdir $BROWSERTEST_OUTPUT_DIRECTORY
