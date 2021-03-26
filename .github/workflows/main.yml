@@ -70,15 +70,14 @@ jobs:
           mkdir -p ~/drupal/web/sites/default/files/civicrm/ext
           cd ~/drupal/web/sites/default/files/civicrm/ext
           git clone https://lab.civicrm.org/extensions/cdntaxreceipts.git
-          cd cdntaxreceipts
-          sed -e '39,45d' phpunit.mink.xml.dist > phpunit.mink.xml
-          cat phpunit.mink.xml
-          pwd      
+          # cd cdntaxreceipts
+          # sed -e '39,45d' phpunit.mink.xml.dist > phpunit.mink.xml            
       - name: Run PHPUnit
         run: |
           mkdir $BROWSERTEST_OUTPUT_DIRECTORY
-          cd ~/drupal/web/core
-          ../../vendor/bin/phpunit -c ../sites/default/files/civicrm/ext/cdntaxreceipts/phpunit.mink.xml ../sites/default/files/civicrm/ext/cdntaxreceipts/tests/phpunit/mink/IssueTest.php
+          cd ~/drupal/web
+          # ../../vendor/bin/phpunit -c ../sites/default/files/civicrm/ext/cdntaxreceipts/phpunit.mink.xml ../sites/default/files/civicrm/ext/cdntaxreceipts/tests/phpunit/mink/IssueTest.php
+          ../vendor/bin/phpunit -c core sites/default/files/civicrm/ext/cdntaxreceipts/tests/phpunit/mink/IssueTest.php
         env:
           SYMFONY_DEPRECATIONS_HELPER: weak
           DEV_EXTENSION_DIR: ~/drupal/web/sites/default/files/civicrm/ext
