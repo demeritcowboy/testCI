@@ -64,13 +64,22 @@ jobs:
         run: chromedriver &
       - name: Run php built-in server
         run: php -S 127.0.0.1:8080 -t ~/drupal/web &
+      # This task is silly but just doing proof of concept right now
+      - name: Get some code to test
+        run: |
+          mkdir -p ~/drupal/web/sites/default/files/civicrm/ext
+          cd ~/drupal/web/sites/default/files/civicrm/ext
+          git clone https://lab.civicrm.org/extensions/cdntaxreceipts.git
+          cd cdntaxreceipts
+          sed -e '39,45d' phpunit.mink.xml.dist > phpunit.mink.xml
       - name: Run PHPUnit
         run: |
           mkdir $BROWSERTEST_OUTPUT_DIRECTORY
-          cd ~/drupal/web
-          ../vendor/bin/phpunit -c core modules/contrib/webform_civicrm
+          cd ~/drupal/web/core
+          ../../vendor/bin/phpunit -c ../sites/default/files/civicrm/ext/cdntaxreceipts/phpunit.mink.xml ../sites/default/files/civicrm/ext/cdntaxreceipts/tests/phpunit/mink/IssueTest.php
         env:
           SYMFONY_DEPRECATIONS_HELPER: weak
+          DEV_EXTENSION_DIR: ~/drupal/web/sites/default/files/civicrm/ext
           SIMPLETEST_DB: mysql://root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db
           SIMPLETEST_BASE_URL: http://127.0.0.1:8080
           MINK_DRIVER_ARGS_WEBDRIVER: '["chrome", {"browserName":"chrome","chromeOptions":{"args":["--disable-gpu", "--no-sandbox", "--headless"]}}, "http://127.0.0.1:9515"]'
