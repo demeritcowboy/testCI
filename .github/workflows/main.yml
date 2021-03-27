@@ -77,7 +77,7 @@ jobs:
           mkdir $BROWSERTEST_OUTPUT_DIRECTORY
           cd ~/drupal/web
           # ../../vendor/bin/phpunit -c ../sites/default/files/civicrm/ext/cdntaxreceipts/phpunit.mink.xml ../sites/default/files/civicrm/ext/cdntaxreceipts/tests/phpunit/mink/IssueTest.php
-          ../vendor/bin/phpunit -c core sites/default/files/civicrm/ext/cdntaxreceipts/tests/phpunit/mink/IssueTest.php
+          ../vendor/bin/phpunit --bootstrap=core/tests/bootstrap.php sites/default/files/civicrm/ext/cdntaxreceipts/tests/phpunit/mink/IssueTest.php
         env:
           SYMFONY_DEPRECATIONS_HELPER: weak
           DEV_EXTENSION_DIR: ~/drupal/web/sites/default/files/civicrm/ext
