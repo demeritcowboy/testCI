@@ -77,7 +77,7 @@ jobs:
           cd ~/drupal/web/sites/default/files/civicrm/ext
           git clone https://lab.civicrm.org/extensions/cdntaxreceipts.git
       - name: Apply PR
-        if: ${{ github.event.inputs.prnum }} != 0
+        if: ${{ github.event.inputs.prnum != 0 }}
         run: |
           cd  ~/drupal/web/sites/default/files/civicrm/ext/cdntaxreceipts
           curl -O https://lab.civicrm.org/extensions/cdntaxreceipts/-/merge_requests/${{ github.event.inputs.prnum }}.patch
