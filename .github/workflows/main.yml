@@ -76,11 +76,13 @@ jobs:
           mkdir -p ~/drupal/web/sites/default/files/civicrm/ext
           cd ~/drupal/web/sites/default/files/civicrm/ext
           git clone https://lab.civicrm.org/extensions/cdntaxreceipts.git
-          cd cdntaxreceipts
+      - name: Apply PR
+        if: ${{ github.event.inputs.prnum }} != 0
+        run: |
+          cd  ~/drupal/web/sites/default/files/civicrm/ext/cdntaxreceipts
           curl -O https://lab.civicrm.org/extensions/cdntaxreceipts/-/merge_requests/${{ github.event.inputs.prnum }}.patch
-          ls -al
-          cat ${{ github.event.inputs.prnum }}.patch
           git apply ${{ github.event.inputs.prnum }}.patch
+          ls -al
           # cd cdntaxreceipts
           # sed -e '39,45d' phpunit.mink.xml.dist > phpunit.mink.xml            
       - name: Run PHPUnit
