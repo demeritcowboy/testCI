@@ -94,7 +94,8 @@ jobs:
           # Sanity check to see if plain core tests run
           ../../bin/phpunit tests/phpunit/CRM/Case/BAO/CaseTest.php
           # Now run our tests
-          ../../bin/phpunit -c phpunit.xml ../../../web/sites/default/files/civicrm/ext/cdntaxreceipts/tests/phpunit/CRM/Cdntaxreceipts/HookTest.php
+          ../../bin/phpunit ../../../web/sites/default/files/civicrm/ext/cdntaxreceipts/tests/phpunit/CRM/Cdntaxreceipts/HookTest.php
+          ../../bin/phpunit ../../../web/sites/default/files/civicrm/ext/cdntaxreceipts/tests/phpunit/CRM/Cdntaxreceipts/UtfTest.php
         env:
           COMPOSER_MEMORY_LIMIT: -1
           SYMFONY_DEPRECATIONS_HELPER: weak
