@@ -83,8 +83,8 @@ jobs:
         if: ${{ github.event.inputs.prurl != 0 }}
         run: |
           cd  ~/drupal/web/sites/default/files/civicrm/ext/thingtotest
-          curl -O ${{ github.event.inputs.prurl }}.patch
-          git apply ${{ github.event.inputs.prurl }}.patch
+          curl -o thingtopatch.patch ${{ github.event.inputs.prurl }}.patch
+          git apply thingtopatch.patch
           ls -al
           # cd cdntaxreceipts
           # sed -e '39,45d' phpunit.mink.xml.dist > phpunit.mink.xml            
