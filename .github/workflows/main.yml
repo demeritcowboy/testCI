@@ -7,9 +7,12 @@ on:
     branches:
       - main
     inputs:
-      prnum:
-        description: PR Number
+      prurl:
+        description: PR Url
         required: false
+      repourl:
+        description: Repo Url
+        required: false      
 jobs:
   phpunit:
     runs-on: ubuntu-latest
@@ -70,18 +73,18 @@ jobs:
         run: chromedriver &
       - name: Run php built-in server
         run: php -S 127.0.0.1:8080 -t ~/drupal/web &
-      # This task is silly but just doing proof of concept right now
       - name: Get some code to test
+        if: ${{ github.event.inputs.prurl != 0 }}
         run: |
           mkdir -p ~/drupal/web/sites/default/files/civicrm/ext
           cd ~/drupal/web/sites/default/files/civicrm/ext
-          git clone https://lab.civicrm.org/extensions/cdntaxreceipts.git
+          git clone ${{ github.event.inputs.repourl }} thingtotest
       - name: Apply PR
-        if: ${{ github.event.inputs.prnum != 0 }}
+        if: ${{ github.event.inputs.prurl != 0 }}
         run: |
-          cd  ~/drupal/web/sites/default/files/civicrm/ext/cdntaxreceipts
-          curl -O https://lab.civicrm.org/extensions/cdntaxreceipts/-/merge_requests/${{ github.event.inputs.prnum }}.patch
-          git apply ${{ github.event.inputs.prnum }}.patch
+          cd  ~/drupal/web/sites/default/files/civicrm/ext/thingtotest
+          curl -O ${{ github.event.inputs.prurl }}.patch
+          git apply ${{ github.event.inputs.prurl }}.patch
           ls -al
           # cd cdntaxreceipts
           # sed -e '39,45d' phpunit.mink.xml.dist > phpunit.mink.xml            
@@ -90,7 +93,7 @@ jobs:
           mkdir $BROWSERTEST_OUTPUT_DIRECTORY
           cd ~/drupal/web
           # ../../vendor/bin/phpunit -c ../sites/default/files/civicrm/ext/cdntaxreceipts/phpunit.mink.xml ../sites/default/files/civicrm/ext/cdntaxreceipts/tests/phpunit/mink/IssueTest.php
-          ../vendor/bin/phpunit -c core sites/default/files/civicrm/ext/cdntaxreceipts/tests/phpunit/mink/IssueTest.php
+          ../vendor/bin/phpunit -c core sites/default/files/civicrm/ext/cdntaxreceipts/tests/phpunit/mink
         env:
           SYMFONY_DEPRECATIONS_HELPER: weak
           DEV_EXTENSION_DIR: /home/runner/drupal/web/sites/default/files/civicrm/ext
