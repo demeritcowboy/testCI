@@ -69,7 +69,9 @@ jobs:
           cd ~/drupal
           COMPOSER_MEMORY_LIMIT=-1 composer require civicrm/civicrm-asset-plugin:'~1.1' civicrm/civicrm-{core,packages,drupal-8}:${{ matrix.civicrm }} --no-suggest --prefer-dist
       - name: Download mink-civicrm-helpers
-        run: composer require semperit/minkcivicrmhelpers
+        run: |
+          cd ~/drupal
+          COMPOSER_MEMORY_LIMIT=-1 composer require semperit/minkcivicrmhelpers
       - uses: nanasess/setup-chromedriver@master
       - name: Run chromedriver
         run: chromedriver &
