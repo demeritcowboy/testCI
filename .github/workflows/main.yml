@@ -61,13 +61,15 @@ jobs:
           composer config minimum-stability dev
           composer config prefer-stable true
           composer config preferred-install dist
-          composer config repositories.0 path $GITHUB_WORKSPACE
+          composer config repositories.0 vcs https://github.com/demeritcowboy/MinkCiviCRMHelpers
           composer config repositories.1 composer https://packages.drupal.org/8
           COMPOSER_MEMORY_LIMIT=-1 composer require drupal/core-dev-pinned:${{ matrix.drupal }} --no-suggest
       - name: Download CiviCRM ${{ matrix.civicrm }}
         run: |
           cd ~/drupal
           COMPOSER_MEMORY_LIMIT=-1 composer require civicrm/civicrm-asset-plugin:'~1.1' civicrm/civicrm-{core,packages,drupal-8}:${{ matrix.civicrm }} --no-suggest --prefer-dist
+      - name: Download mink-civicrm-helpers
+        run: composer require semperit/minkcivicrmhelpers
       - uses: nanasess/setup-chromedriver@master
       - name: Run chromedriver
         run: chromedriver &
