@@ -1,3 +1,4 @@
+name: Integration Tests
 on:
   pull_request:
     branches:
@@ -12,7 +13,6 @@ on:
       repourl:
         description: Repo Url
         required: false      
-name: ${{ github.event.inputs.prurl }} - Integration Tests
 jobs:
   phpunit:
     runs-on: ubuntu-latest
