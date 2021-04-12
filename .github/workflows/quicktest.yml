@@ -1,0 +1,13 @@
+name: Quick Tests
+on:  
+  workflow_dispatch:
+    branches:
+      - main
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    name: quicktest    
+    steps:
+      - name: does mail work?
+        id: mailwork
+        run: mail -s "test" demeritcowboy@hotmail.com < $GITHUB_WORKSPACE/README.md
