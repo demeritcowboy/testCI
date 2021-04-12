@@ -8,13 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     name: quicktest    
     steps:
-      - name: setup smtp
-        uses: namshi/smtp@master
-      - name: does mail work?
-        id: mailwork
-        run: |
-          #sudo apt-get update -y
-          #sudo apt-get install -y bsd-mailx
-          echo "testing 123" | mail -s "test" demeritcowboy@hotmail.com
-          tail /var/log/exim_mainlog
-          
+      - name: send smtp
+        uses: wadeww/send-email-action@v1
+        with:
+          server_address: smtp.mail.yahoo.com
+          port: 465
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
+          subject: Workflow finished
+          body: Job completed ${{job.status}}
+          to: clam_octagon@yahoo.ca
+          from: clam_octagon@yahoo.ca
