@@ -8,6 +8,13 @@ jobs:
     runs-on: ubuntu-latest
     name: quicktest    
     steps:
+      - name: Dump job context
+        env:
+          JOB_CONTEXT: ${{ toJSON(job) }}
+        run: |
+          echo "$JOB_CONTEXT"
+          echo "${{ github.run_id }}"
+          echo "${{ github.run_number }}"
       - name: send smtp
         uses: wadeww/send-email-action@v1
         with:
