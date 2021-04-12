@@ -10,4 +10,4 @@ jobs:
     steps:
       - name: does mail work?
         id: mailwork
-        run: mail -s "test" demeritcowboy@hotmail.com < $GITHUB_WORKSPACE/README.md
+        run: echo "testing 123" | mail -s "test" demeritcowboy@hotmail.com
