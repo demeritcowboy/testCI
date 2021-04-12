@@ -10,4 +10,8 @@ jobs:
     steps:
       - name: does mail work?
         id: mailwork
-        run: echo "testing 123" | mail -s "test" demeritcowboy@hotmail.com
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y bsd-mailx
+          echo "testing 123" | mail -s "test" demeritcowboy@hotmail.com
+          
