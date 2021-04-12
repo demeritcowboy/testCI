@@ -9,7 +9,7 @@ jobs:
     name: quicktest    
     steps:
       - name: setup smtp
-        uses: angelnu/exim@latest
+        uses: namshi/smtp@latest
       - name: does mail work?
         id: mailwork
         run: |
