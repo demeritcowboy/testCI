@@ -8,11 +8,13 @@ jobs:
     runs-on: ubuntu-latest
     name: quicktest    
     steps:
+      - name: setup smtp
+        uses: angelnu/exim@latest
       - name: does mail work?
         id: mailwork
         run: |
-          sudo apt-get update -y
-          sudo apt-get install -y bsd-mailx
+          #sudo apt-get update -y
+          #sudo apt-get install -y bsd-mailx
           echo "testing 123" | mail -s "test" demeritcowboy@hotmail.com
-          tail /var/log/maillog
+          tail /var/log/exim_mainlog
           
