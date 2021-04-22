@@ -1,0 +1,31 @@
+name: statistics 
+on:
+  workflow_dispatch:
+    branches:
+      - main
+    inputs:
+      prnum:
+        description: PR Number
+        required: false
+jobs:
+  stats:
+    runs-on: ubuntu-latest
+  name: Statistics test
+    steps:
+      - uses: actions/checkout@v2
+      - name: starttimer
+        run: export STARTTIME=`date +%s`
+      - name: get diskspace
+        run: |
+          cd $GITHUB_WORKSPACE
+          curl -L -O https://download.civicrm.org/civicrm-5.36.1-drupal.tar.gz
+          ls -al
+          export SPACEUSED=`du -s | cut -f1`          
+      - name: final
+        run: |
+          TIMEUSED=$(( `date +%s` - $STARTTIME ))
+          echo $TIMEUSED
+          echo $SPACEUSED          
+        env:
+          COMPOSER_MEMORY_LIMIT: -1
+          SYMFONY_DEPRECATIONS_HELPER: weak
