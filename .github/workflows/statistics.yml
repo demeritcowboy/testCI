@@ -10,7 +10,7 @@ on:
 jobs:
   stats:
     runs-on: ubuntu-latest
-  name: Statistics test
+    name: Statistics test
     steps:
       - uses: actions/checkout@v2
       - name: starttimer
