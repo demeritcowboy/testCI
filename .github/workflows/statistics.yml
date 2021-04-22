@@ -14,17 +14,21 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: starttimer
-        run: export STARTTIME=`date +%s`
-      - name: get diskspace
+        run: |
+          cd $GITHUB_WORKSPACE
+          date +%s > timerfile
+      - name: do something
         run: |
           cd $GITHUB_WORKSPACE
           curl -L -O https://download.civicrm.org/civicrm-5.36.1-drupal.tar.gz
           ls -al
-          export SPACEUSED=`du -s | cut -f1`          
-      - name: final
+      - name: calc
         run: |
+          cd $GITHUB_WORKSPACE
+          STARTTIME=`cat timerfile`
           TIMEUSED=$(( `date +%s` - $STARTTIME ))
           echo $TIMEUSED
+          SPACEUSED=`du -s | cut -f1`         
           echo $SPACEUSED          
         env:
           COMPOSER_MEMORY_LIMIT: -1
