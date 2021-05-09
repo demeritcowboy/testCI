@@ -68,6 +68,9 @@ jobs:
         run: |
           cd ~/drupal
           COMPOSER_MEMORY_LIMIT=-1 composer require civicrm/civicrm-asset-plugin:'~1.1' civicrm/civicrm-{core,packages,drupal-8}:${{ matrix.civicrm }} --no-suggest --prefer-dist
+          cd vendor/civicrm/civicrm-core
+          curl -L -o my.patch https://patch-diff.githubusercontent.com/raw/civicrm/civicrm-core/pull/20254.patch
+          git apply my.patch
       - name: Download mink-civicrm-helpers
         run: |
           cd ~/drupal
