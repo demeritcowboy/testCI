@@ -78,7 +78,7 @@ jobs:
       - name: Run php built-in server
         run: php -S 127.0.0.1:8080 -t ~/drupal/web &
       - name: Get some code to test
-        if: ${{ github.event.inputs.prurl != 0 }}
+        if: ${{ github.event.inputs.repourl != 0 }}
         run: |
           mkdir -p ~/drupal/web/sites/default/files/civicrm/ext
           cd ~/drupal/web/sites/default/files/civicrm/ext
