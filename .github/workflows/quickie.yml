@@ -1,0 +1,14 @@
+name: quicktest
+on:
+  workflow_dispatch:
+    branches:
+      - main    
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    name: quick test
+    steps:
+      - name: starttimer
+        run: |
+          banana=$( ${{ success() }} && echo "hi" || echo "ho" )
+          echo $banana
