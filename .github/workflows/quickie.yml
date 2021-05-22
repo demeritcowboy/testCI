@@ -8,7 +8,18 @@ jobs:
     runs-on: ubuntu-latest
     name: quick test
     steps:
-      - name: starttimer
+      # It seems like there should be shorthand for this instead of 10 lines
+      - name: checkstatus1
+        if: ${{ success() }}
         run: |
-          banana=$( ${{ success() }} && echo "hi" || echo "ho" )
+          export RUNSTATUS=1
+          echo "::set-env name=RUNSTATUS::$RUNSTATUS"
+      - name: checkstatus2
+        if: ${{ failure() }}
+        run: |
+          export RUNSTATUS=0
+          echo "::set-env name=RUNSTATUS::$RUNSTATUS"
+      - name: finale
+        run: |
+          banana=$( $RUNSTATUS && echo "hi" || echo "ho" )
           echo $banana
