@@ -8,18 +8,15 @@ jobs:
     runs-on: ubuntu-latest
     name: quick test
     steps:
-      # It seems like there should be shorthand for this instead of 10 lines
+      # It seems like there should be shorthand for this instead of 8 lines
       - name: checkstatus1
         if: ${{ success() }}
         run: |
-          export RUNSTATUS=1
-          echo "::set-env name=RUNSTATUS::$RUNSTATUS"
+          echo "RUNSTATUS=PASS" >> $GITHUB_ENV
       - name: checkstatus2
         if: ${{ failure() }}
         run: |
-          export RUNSTATUS=0
-          echo "::set-env name=RUNSTATUS::$RUNSTATUS"
+          echo "RUNSTATUS=FAIL" >> $GITHUB_ENV
       - name: finale
         run: |
-          banana=$( $RUNSTATUS && echo "hi" || echo "ho" )
-          echo $banana
+          echo ${{ env.RUNSTATUS }}:+something/something/2
