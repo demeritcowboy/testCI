@@ -27,10 +27,11 @@ jobs:
           echo "RUNSTATUS=FAIL" >> $GITHUB_ENV
       - name: finale
         run: |
-          temp1=${${{ github.event.inputs.thing }}%/-/merge_requests/*}
+          thing=${{ github.event.inputs.thing }}
+          temp1=${thing%/-/merge_requests/*}
           projectname=${temp1#https://*/}
           # close enough?
           urlencoded=${projectname//\//%2F}
           domain=${temp1%/$projectname}
-          mrid=${${{ github.event.inputs.thing }}##*/}
+          mrid=${thing##*/}
           echo ${domain}/api/v4/projects/${urlencoded}/merge_requests/${mrid}/notes?body=${{ env.RUNSTATUS }}+%28CiviCarrot%29
