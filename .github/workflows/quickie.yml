@@ -4,8 +4,8 @@ on:
     branches:
       - main   
     inputs:
-      prnum:
-        description: PR Number
+      thing:
+        description: Thing
         required: false
 jobs:
   phpunit:
@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - foo: ${{ github.event.inputs.prnum }}            
+          - foo: ${{ github.event.inputs.thing }}            
     name: quick test ${{ matrix.foo }}
     steps:
       # It seems like there should be shorthand for this instead of 8 lines
@@ -27,4 +27,10 @@ jobs:
           echo "RUNSTATUS=FAIL" >> $GITHUB_ENV
       - name: finale
         run: |
-          echo ${{ env.RUNSTATUS }}:+something/something/2
+          temp1=${${{ github.event.inputs.thing }}%/-/merge_requests/*}
+          projectname=${temp1#https://*/}
+          # close enough?
+          urlencoded=${projectname//\//%2F}
+          domain=${temp1%/$projectname}
+          mrid=${${{ github.event.inputs.thing }}##*/}
+          echo ${domain}/api/v4/projects/${urlencoded}/merge_requests/${mrid}/notes?body=${{ env.RUNSTATUS }}+%28CiviCarrot%29
