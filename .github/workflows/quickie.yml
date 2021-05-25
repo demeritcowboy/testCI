@@ -2,11 +2,19 @@ name: quicktest
 on:
   workflow_dispatch:
     branches:
-      - main    
+      - main   
+    inputs:
+      prnum:
+        description: PR Number
+        required: false
 jobs:
   phpunit:
     runs-on: ubuntu-latest
-    name: quick test
+    strategy:
+      matrix:
+        include:
+          - foo: ${{ github.event.inputs.prnum }}            
+    name: quick test ${{ matrix.foo }}
     steps:
       # It seems like there should be shorthand for this instead of 8 lines
       - name: checkstatus1
