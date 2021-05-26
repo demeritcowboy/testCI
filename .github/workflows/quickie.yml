@@ -16,11 +16,13 @@ jobs:
           - foo: ${{ github.event.inputs.thing }}            
     name: quick test ${{ matrix.foo }}
     steps:
+      - name: xml pre-parse
+        run: curl -L -O https://raw.githubusercontent.com/civicrm/civicrm-core/master/xml/version.xml
       - name: xml parse
         id: xmlparse
         uses: mavrosxristoforos/get-xml-info@1.0
         with:
-          xml-file: 'https://raw.githubusercontent.com/civicrm/civicrm-core/master/xml/version.xml'
+          xml-file: 'version.xml'
           xpath: '//version_no'
       - name: use parsed xml
         run: echo ${{ steps.xmlparse.outputs.info }}
