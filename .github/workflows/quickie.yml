@@ -16,6 +16,14 @@ jobs:
           - foo: ${{ github.event.inputs.thing }}            
     name: quick test ${{ matrix.foo }}
     steps:
+      - name: xml parse
+        id: xmlparse
+        uses: mavrosxristoforos/get-xml-info@1.0
+        with:
+          xml-file: 'https://raw.githubusercontent.com/civicrm/civicrm-core/master/xml/version.xml'
+          xpath: '//version_no'
+      - name: use parsed xml
+        run: echo ${{ steps.xmlparse.outputs.info }}
       # It seems like there should be shorthand for this instead of 8 lines
       - name: checkstatus1
         if: ${{ success() }}
