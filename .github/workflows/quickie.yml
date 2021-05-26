@@ -25,7 +25,11 @@ jobs:
           xml-file: 'version.xml'
           xpath: '//version_no'
       - name: use parsed xml
-        run: echo ${{ steps.xmlparse.outputs.info }}
+        run: |
+          alphaver=${{ steps.xmlparse.outputs.info }}
+          masterver=${alphaver%.alpha1}
+          rcver=`awk "BEGIN {print $masterver - 0.01}"`
+          echo ${rcver}-dev
       # It seems like there should be shorthand for this instead of 8 lines
       - name: checkstatus1
         if: ${{ success() }}
