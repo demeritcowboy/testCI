@@ -36,4 +36,9 @@ jobs:
           # Todo how are we going to know the namespace - the bridge could maybe compute it from info.xml - parsing xml here might be painful
           civix generate:test --template=mink "Civi\Caseidinsubject\Mink\FirstTest"
           git add phpunit.mink.xml.dist tests/phpunit
+          # why doesn't this display anything?
           git diff
+      - uses: actions/upload-artifact@v2
+        with:
+          name: let us see it
+          path: '/home/runner/work/testCI/testCI/thing'
