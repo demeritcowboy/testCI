@@ -1,0 +1,40 @@
+name: Create mink merge request
+on:
+  workflow_dispatch:
+    branches:
+      - main
+    inputs:
+      repourl:
+        description: repo url
+        required: true
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    name: Create merge request
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+            php-version: 7.3
+            extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
+            coverage: none
+            tools: composer:v1
+      - name: Download civix
+        run: |
+          cd $GITHUB_WORKSPACE
+          git clone https://github.com/totten/civix.git civix
+          cd civix
+          COMPOSER_MEMORY_LIMIT=-1 composer install
+          # patch it
+          curl -L -o mink.patch https://github.com/totten/civix/compare/master...demeritcowboy:mink.patch
+          git apply mink.patch
+      - name: Get some code and do stuff to it
+        run: |
+          cd $GITHUB_WORKSPACE
+          git clone ${{ github.event.inputs.repourl }} thing
+          cd thing
+          git checkout -b mink
+          # generate test patch
+          export PATH=$PATH:$GITHUB_WORKSPACE/civix/bin
+          # Todo how are we going to know the namespace - the bridge could maybe compute it from info.xml - parsing xml here might be painful
+          civix generate:test --template=mink "Civi\Caseidinsubject\Mink\FirstTest"
+          git diff
