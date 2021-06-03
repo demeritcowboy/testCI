@@ -1,8 +1,6 @@
 name: Create mink merge request
 on:
   workflow_dispatch:
-    branches:
-      - main
     inputs:
       repourl:
         description: repo url
@@ -37,4 +35,5 @@ jobs:
           export PATH=$PATH:$GITHUB_WORKSPACE/civix/bin
           # Todo how are we going to know the namespace - the bridge could maybe compute it from info.xml - parsing xml here might be painful
           civix generate:test --template=mink "Civi\Caseidinsubject\Mink\FirstTest"
+          git add phpunit.mink.xml.dist tests/phpunit
           git diff
