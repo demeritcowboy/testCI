@@ -38,6 +38,7 @@ jobs:
           git add phpunit.mink.xml.dist tests/phpunit
           # why doesn't this display anything?
           git diff
+          git commit -a -m "sample mink test"
       - uses: actions/upload-artifact@v2
         with:
           name: let us see it
@@ -79,4 +80,4 @@ jobs:
           git remote add mine https://civicarrot:${{secrets.LABCO_API_KEY}}@lab.civicrm.org/civicarrot/${extname}.git
           git push -u mine mink
           # Now make a merge request
-          curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" -X POST ${domain}/api/v4/projects/civicarrot%2F${extname}/merge_requests?source_branch=mink&target_branch=master&target_project_id=${forkfromid}&title=Your+first+Mink+test&remove_source_branch=true&allow_collaboration=true
+          curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" -X POST ${domain}/api/v4/projects/civicarrot%2F${extname}/merge_requests?source_branch=mink\&target_branch=master\&target_project_id=${forkfromid}\&title=Your+first+Mink+test\&remove_source_branch=true\&allow_collaboration=true
