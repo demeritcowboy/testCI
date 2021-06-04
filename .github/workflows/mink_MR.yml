@@ -52,9 +52,9 @@ jobs:
           urlencoded=${projectname//\//%2F}
           domain=${temp1%/$projectname}
           echo ${domain}/api/v4/projects/${urlencoded}/fork
-          # curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" -X POST ${domain}/api/v4/projects/${urlencoded}/fork
+          curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" -X POST ${domain}/api/v4/projects/${urlencoded}/fork
           # we're supposed to now query the import status of the new project repeatedly until it has been created
           echo ${domain}/api/v4/projects/civicarrot%2F${extname}
-          importstatus=`curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" ${domain}/api/v4/projects/civicarrot%2F${extname}`
-          echo $importstatus
-        
+          projectinfo=`curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" ${domain}/api/v4/projects/civicarrot%2F${extname}`
+          echo $projectinfo
+          echo ${{fromJson($projectinfo).import_status}}
