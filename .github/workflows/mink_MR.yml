@@ -36,8 +36,10 @@ jobs:
           NAMESPACE=`php -r '$x = simplexml_load_file("info.xml"); $ns = $x->civix[0]->namespace; $nsexp = explode("/", $ns); echo array_pop($nsexp);'`
           civix generate:test --template=mink "Civi\\$NAMESPACE\Mink\FirstTest"
           git add phpunit.mink.xml.dist tests/phpunit
-          # why doesn't this display anything?
+          # why doesn't this diff display anything?
           git diff
+          git config --global user.name "CiviCARROT"
+          git config --global user.email "civicarrot@gmail.com"
           git commit -a -m "sample mink test"
       - uses: actions/upload-artifact@v2
         with:
@@ -74,8 +76,6 @@ jobs:
           done
           # Now push our branch
           cd $GITHUB_WORKSPACE/thing
-          git config --global user.name "CiviCARROT"
-          git config --global user.email "civicarrot@gmail.com"
           # This no longer uses the generic $domain but let's get it working with labco first.
           git remote add mine https://civicarrot:${{secrets.LABCO_API_KEY}}@lab.civicrm.org/civicarrot/${extname}.git
           git push -u mine mink
