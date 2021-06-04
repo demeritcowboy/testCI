@@ -34,9 +34,7 @@ jobs:
           # generate test patch
           export PATH=$PATH:$GITHUB_WORKSPACE/civix/bin
           NAMESPACE=`php -r '$x = simplexml_load_file("info.xml"); $ns = $x->civix[0]->namespace; $nsexp = explode("/", $ns); echo array_pop($nsexp);'`
-          echo $NAMESPACE
-          echo "Civi\\$NAMESPACE\Mink\FirstTest"
-          civix generate:test --template=mink "Civi\$NAMESPACE\Mink\FirstTest"
+          civix generate:test --template=mink "Civi\\$NAMESPACE\Mink\FirstTest"
           git add phpunit.mink.xml.dist tests/phpunit
           # why doesn't this display anything?
           git diff
