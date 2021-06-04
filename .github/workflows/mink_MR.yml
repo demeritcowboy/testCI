@@ -57,4 +57,4 @@ jobs:
           echo ${domain}/api/v4/projects/civicarrot%2F${extname}
           projectinfo=`curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" ${domain}/api/v4/projects/civicarrot%2F${extname}`
           echo $projectinfo
-          echo ${{fromJson($projectinfo).import_status}}
+          echo ${{fromJson(${projectinfo}).import_status}}
