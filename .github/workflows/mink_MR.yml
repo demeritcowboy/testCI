@@ -52,10 +52,13 @@ jobs:
           urlencoded=${projectname//\//%2F}
           domain=${temp1%/$projectname}
           echo ${domain}/api/v4/projects/${urlencoded}/fork
-          curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" -X POST ${domain}/api/v4/projects/${urlencoded}/fork
+          forkjson=`curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" -X POST ${domain}/api/v4/projects/${urlencoded}/fork`
+          # The builtin fromJSON() doesn't seem to work with variables and I can't figure out what it wants, so use php.
+          forkfromid=`echo $forkjson | php -r '$json = json_decode(fgets(STDIN), true); echo $json["forked_from_project"]["id"] ?? "";'`
           # we're supposed to now query the import status of the new project repeatedly until it has been created
           i=0
-          while [ $i -le 2 ]; do
+          importstatus=
+          while [[ $i -le 3 && importstatus != "finished" ]]; do
           sleep 10
           echo ${domain}/api/v4/projects/civicarrot%2F${extname}
           projectinfo=`curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" ${domain}/api/v4/projects/civicarrot%2F${extname}`
@@ -65,3 +68,9 @@ jobs:
           echo $importstatus
           (( i++ ))
           done
+          # Now push our branch
+          cd $GITHUB_WORKSPACE/thing
+          git remote add mine ${domain}/civicarrot/${extname}.git
+          git push -u mine mink
+          # Now make a merge request
+          curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" -X POST ${domain}/api/v4/projects/civicarrot%2F${extname}/merge_requests?source_branch=mink&target_branch=master&target_project_id=${forkfromid}&title=Your+first+Mink+test&remove_source_branch=true&allow_collaboration=true
