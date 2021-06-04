@@ -59,4 +59,4 @@ jobs:
           echo $projectinfo
           echo "projectinfo=$projectinfo" >> $GITHUB_ENV
           echo env.projectinfo
-          # echo ${{ fromJson(env.projectinfo).import_status }}
+
