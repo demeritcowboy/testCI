@@ -54,7 +54,7 @@ jobs:
           echo ${domain}/api/v4/projects/${urlencoded}/fork
           forkjson=`curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" -X POST ${domain}/api/v4/projects/${urlencoded}/fork`
           # The builtin fromJSON() doesn't seem to work with variables and I can't figure out what it wants, so use php.
-          forkfromid=`echo $forkjson | php -r '$json = json_decode(fgets(STDIN), true); echo $json["forked_from_project"]["id"] ?? "";'`
+          forkfromid=`echo $forkjson | php -r '$json = json_decode(fgets(STDIN), true); echo $json["forked_from_project"]["id"] ?? ""; var_dump($json);'`
           echo $forkfromid
           # we're supposed to now query the import status of the new project repeatedly until it has been created
           i=0
