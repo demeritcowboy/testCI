@@ -57,7 +57,7 @@ jobs:
           i=0
           importstatus=
           forkfromid=
-          while [[ $i -le 3 && $importstatus != "finished" ]]; do
+          while [ $i -le 3 ]; do
           sleep 10
           echo ${domain}/api/v4/projects/civicarrot%2F${extname}
           projectinfo=`curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" ${domain}/api/v4/projects/civicarrot%2F${extname}`
@@ -67,6 +67,8 @@ jobs:
           echo $importstatus
           forkfromid=`echo $projectinfo | php -r '$json = json_decode(fgets(STDIN), true); echo $json["forked_from_project"]["id"] ?? "";'`
           echo $forkfromid
+          # if we put this in the while condition, then the loop always exits with error status and the whole script ends
+          if [ "$importstatus" = "finished" ]; then break; fi
           (( i++ ))
           done
           # Now push our branch
