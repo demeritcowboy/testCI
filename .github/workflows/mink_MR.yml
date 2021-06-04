@@ -42,3 +42,19 @@ jobs:
         with:
           name: let us see it
           path: '/home/runner/work/testCI/testCI/thing'
+      - name: fork project
+        run: |
+          repourl=${{ github.event.inputs.repourl }}
+          temp1=${repourl%.git}
+          extname=${temp1##*/}
+          projectname=${temp1#https://*/}
+          # close enough?
+          urlencoded=${projectname//\//%2F}
+          domain=${temp1%/$projectname}
+          echo ${domain}/api/v4/projects/${urlencoded}/fork
+          # curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" -X POST ${domain}/api/v4/projects/${urlencoded}/fork
+          # we're supposed to now query the import status of the new project repeatedly until it has been created
+          echo ${domain}/api/v4/projects/civicarrot%2F${extname}
+          importstatus=`curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" ${domain}/api/v4/projects/civicarrot%2F${extname}`
+          echo $importstatus
+        
