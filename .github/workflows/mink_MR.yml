@@ -73,7 +73,10 @@ jobs:
           done
           # Now push our branch
           cd $GITHUB_WORKSPACE/thing
-          git remote add mine ${domain}/civicarrot/${extname}.git
+          git config --global user.name "CiviCARROT"
+          git config --global user.email "civicarrot@gmail.com"
+          # This no longer uses the generic $domain but let's get it working with labco first.
+          git remote add mine https://civicarrot:${{secrets.LABCO_API_KEY}}@lab.civicrm.org/civicarrot/${extname}.git
           git push -u mine mink
           # Now make a merge request
           curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" -X POST ${domain}/api/v4/projects/civicarrot%2F${extname}/merge_requests?source_branch=mink&target_branch=master&target_project_id=${forkfromid}&title=Your+first+Mink+test&remove_source_branch=true&allow_collaboration=true
