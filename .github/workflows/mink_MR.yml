@@ -33,8 +33,8 @@ jobs:
           git checkout -b mink
           # generate test patch
           export PATH=$PATH:$GITHUB_WORKSPACE/civix/bin
-          # Todo how are we going to know the namespace - the bridge could maybe compute it from info.xml - parsing xml here might be painful
-          civix generate:test --template=mink "Civi\Caseidinsubject\Mink\FirstTest"
+          NAMESPACE=`php -r '$x = simplexml_load_file("info.xml"); $ns = $x->civix[0]->namespace; $nsexp = explode("/", $ns); echo array_pop($nsexp);'`
+          civix generate:test --template=mink "Civi\$NAMESPACE\Mink\FirstTest"
           git add phpunit.mink.xml.dist tests/phpunit
           # why doesn't this display anything?
           git diff
