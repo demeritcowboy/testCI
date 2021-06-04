@@ -57,5 +57,5 @@ jobs:
           echo ${domain}/api/v4/projects/civicarrot%2F${extname}
           projectinfo=`curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" ${domain}/api/v4/projects/civicarrot%2F${extname}`
           echo $projectinfo
-          echo env.projectinfo
-          echo ${{fromJson(env.projectinfo).import_status}}
+          echo "projectinfo=$projectinfo" >> $GITHUB_ENV
+          echo ${{ fromJson(env.projectinfo).import_status }}
