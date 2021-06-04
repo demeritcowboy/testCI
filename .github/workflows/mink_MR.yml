@@ -52,12 +52,16 @@ jobs:
           urlencoded=${projectname//\//%2F}
           domain=${temp1%/$projectname}
           echo ${domain}/api/v4/projects/${urlencoded}/fork
-          #curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" -X POST ${domain}/api/v4/projects/${urlencoded}/fork
+          curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" -X POST ${domain}/api/v4/projects/${urlencoded}/fork
           # we're supposed to now query the import status of the new project repeatedly until it has been created
+          i=0
+          while [ $i -le 2 ]; do
+          sleep 10
           echo ${domain}/api/v4/projects/civicarrot%2F${extname}
           projectinfo=`curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" ${domain}/api/v4/projects/civicarrot%2F${extname}`
           echo $projectinfo
           # The builtin fromJSON() doesn't seem to work with variables and I can't figure out what it wants, so use php.
-          importstatus=`echo $projectinfo | php -r '$json = json_decode(fgets(STDIN), true); echo $json["import_status"] ?? "nope"; echo $json["message"] ?? "neep";'`
+          importstatus=`echo $projectinfo | php -r '$json = json_decode(fgets(STDIN), true); echo $json["import_status"] ?? "";'`
           echo $importstatus
-
+          (( i++ ))
+          done
