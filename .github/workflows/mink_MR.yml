@@ -54,6 +54,7 @@ jobs:
           # close enough?
           urlencoded=${projectname//\//%2F}
           domain=${temp1%/$projectname}
+          baredomain=${domain##*/}
           echo ${domain}/api/v4/projects/${urlencoded}/fork
           curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" -X POST ${domain}/api/v4/projects/${urlencoded}/fork
           # we're supposed to now query the import status of the new project repeatedly until it has been created
@@ -76,8 +77,7 @@ jobs:
           done
           # Now push our branch
           cd $GITHUB_WORKSPACE/thing
-          # TODO: This no longer uses the generic $domain but let's get it working with labco first.
-          git remote add mine https://civicarrot:${{secrets.LABCO_API_KEY}}@lab.civicrm.org/civicarrot/${extname}.git
+          git remote add mine https://civicarrot:${{secrets.LABCO_API_KEY}}@${baredomain}/civicarrot/${extname}.git
           git push -u mine mink
           # Now make a merge request
           curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" -X POST ${domain}/api/v4/projects/civicarrot%2F${extname}/merge_requests?source_branch=mink\&target_branch=master\&target_project_id=${forkfromid}\&title=Your+first+Mink+test\&remove_source_branch=true\&allow_collaboration=true\&description=If+you+have+set+up+the+webhook,+this+will+have+started+an+automated+test+run+and+CiviCARROT+should+post+back+here+with+the+results+when+done.+When+you+make+changes+to+this+merge+request,+it+will+trigger+another+run+of+automated+tests+against+it.
