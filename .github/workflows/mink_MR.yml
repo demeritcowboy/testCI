@@ -35,7 +35,7 @@ jobs:
           export PATH=$PATH:$GITHUB_WORKSPACE/civix/bin
           NAMESPACE=`php -r '$x = simplexml_load_file("info.xml"); $ns = $x->civix[0]->namespace; $nsexp = explode("/", $ns); echo array_pop($nsexp);'`
           civix generate:test --template=mink "Civi\\$NAMESPACE\Mink\FirstTest"
-          git add phpunit.mink.xml.dist tests/phpunit
+          git add phpunit.mink.xml tests/phpunit
           # why doesn't this diff display anything?
           git diff
           git config --global user.name "CiviCARROT"
