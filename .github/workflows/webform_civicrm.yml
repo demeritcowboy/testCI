@@ -1,0 +1,40 @@
+name: Create PR from MR
+on:
+  workflow_dispatch:
+    inputs:
+      prurl:
+        description: pr url
+        required: true
+      commitmessage:
+        description: commit message
+        required: true        
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    name: Create PR from MR
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+            php-version: 7.4
+            extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
+            coverage: none
+            tools: composer:v2
+      - name: clone webform
+        run: |
+          cd $GITHUB_WORKSPACE
+          gh repo list SemperIT
+          exit -1
+          false
+          git clone https://github.com/colemanw/webform_civicrm.git
+          cd webform_civicrm
+          # apply MR
+          git checkout -b newthing
+          curl -L -o a.patch ${{ github.event.inputs.prurl }}.patch
+          git apply a.patch
+          git remote add mine https://github.com/SemperIT/webform_civicrm.git
+          # Hmm
+          git add .
+          git config --global user.name "CiviCARROT"
+          git config --global user.email "civicarrot@gmail.com"
+          git commit -a -m "${{ github.event.inputs.commitmessage }}"
+          git push -u mine newthing
