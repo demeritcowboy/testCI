@@ -16,7 +16,7 @@ jobs:
           - foo: ${{ github.event.inputs.thing }}            
     name: quick test ${{ matrix.foo }}
     steps:
-      - uses: shivammathur/setup-php@v2.10.0
+      - uses: shivammathur/setup-php@2.10.0
         with:
             php-version: 7.4
             extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
