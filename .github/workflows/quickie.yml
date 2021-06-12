@@ -16,6 +16,16 @@ jobs:
           - foo: ${{ github.event.inputs.thing }}            
     name: quick test ${{ matrix.foo }}
     steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+            php-version: 7.4
+            extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
+            coverage: none
+            tools: composer:v2
+      - name: php config
+        run: |
+          php -r "$x = extension_loaded('imagick'); var_dump($x);"
+          php -r "$x = function_exists('imagecreatefrompng'); var_dump($x);"
       - name: xml pre-parse
         run: curl -L -O https://raw.githubusercontent.com/civicrm/civicrm-core/master/xml/version.xml
       - name: xml parse
