@@ -24,8 +24,8 @@ jobs:
             tools: composer:v2
       - name: php config
         run: |
-          php -r "$x = extension_loaded('imagick'); var_dump($x);"
-          php -r "$x = function_exists('imagecreatefrompng'); var_dump($x);"
+          php -r '$x = extension_loaded("imagick"); var_dump($x);'
+          php -r '$x = function_exists("imagecreatefrompng"); var_dump($x);'
       - name: xml pre-parse
         run: curl -L -O https://raw.githubusercontent.com/civicrm/civicrm-core/master/xml/version.xml
       - name: xml parse
