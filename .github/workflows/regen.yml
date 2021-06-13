@@ -19,8 +19,9 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_ALLOW_EMPTY_PASSWORD: no
           MYSQL_DATABASE: db
+          MYSQL_ROOT_PASSWORD: passpasspw
         ports:
           - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -47,7 +48,7 @@ jobs:
           mv drupal-7.81 drupal
           cd drupal
           composer require drush/drush:'^8'
-          ./vendor/drush/drush/drush -y -l http://civi.localhost site-install standard --db-url='mysql://root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db' --site-name=TestCivi --account-pass=admin
+          ./vendor/drush/drush/drush -y -l http://civi.localhost site-install standard --db-url='mysql://root:passpasspw@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db' --site-name=TestCivi --account-pass=admin
           chmod +w sites/default
           cd sites/all/modules         
           git clone -b ${{ github.event.inputs.civiver }} --depth 1 https://github.com/civicrm/civicrm-core.git civicrm
@@ -73,6 +74,7 @@ jobs:
           cp setup.conf.txt setup.conf
           sed -i -e "s#CIVISOURCEDIR=#CIVISOURCEDIR=$GITHUB_WORKSPACE/drupal/sites/all/modules/civicrm#" setup.conf
           sed -i -e 's/DBUSER=/DBUSER=root/' setup.conf
+          sed -i -e 's/DBPASS=/DBPASS=passpasspw/' setup.conf
           sed -i -e 's/DBNAME=/DBNAME=db/' setup.conf
           sed -i -e 's/DBPORT=/DBPORT=${{ job.services.mysql.ports[3306] }}/' setup.conf
           cat setup.conf
