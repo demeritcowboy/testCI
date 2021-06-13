@@ -64,7 +64,7 @@ jobs:
         if: ${{ github.event.inputs.prurl != 0 }}
         run: |
           cd $GITHUB_WORKSPACE
-          curl -o a.patch ${{ github.event.inputs.prurl }}.patch
+          curl -L -o a.patch ${{ github.event.inputs.prurl }}.patch
           cd drupal/sites/all/modules/civicrm
           git apply $GITHUB_WORKSPACE/a.patch
       - name: regen
