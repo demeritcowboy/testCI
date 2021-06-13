@@ -71,6 +71,7 @@ jobs:
       - name: regen
         run: |
           cd $GITHUB_WORKSPACE/drupal/sites/all/modules/civicrm/bin
+          export PATH=$PATH:$GITHUB_WORKSPACE/drupal/vendor/drush/drush
           cp setup.conf.txt setup.conf
           sed -i -e "s#CIVISOURCEDIR=#CIVISOURCEDIR=$GITHUB_WORKSPACE/drupal/sites/all/modules/civicrm#" setup.conf
           sed -i -e 's/DBUSER=/DBUSER=root/' setup.conf
@@ -80,6 +81,7 @@ jobs:
           sed -i -e 's/DBPORT=/DBPORT=${{ job.services.mysql.ports[3306] }}/' setup.conf
           sed -i -e 's/GENCODE_CMS=""/GENCODE_CMS=Drupal/' setup.conf
           cat setup.conf
+          # make it easier to see what's going on if it fails
           sed -i -e 's#set -e#set -e\nset -x#' setup.sh
           cd ..
           bin/regen.sh
