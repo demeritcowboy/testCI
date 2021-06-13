@@ -78,11 +78,9 @@ jobs:
           sed -i -e 's/DBHOST=/DBHOST=127.0.0.1/' setup.conf
           sed -i -e 's/DBPORT=/DBPORT=${{ job.services.mysql.ports[3306] }}/' setup.conf
           sed -i -e 's/GENCODE_CMS=""/GENCODE_CMS=Drupal/' setup.conf
+          # next two lines just make it easier to see what's going on if it fails
           cat setup.conf
-          # make it easier to see what's going on if it fails
-          sed -i -e 's#set -e#set -e\nset -x#' setup.sh
-          # ??? maybe some mismatch between mysqldump 8 and mysql 5.7 ?!?!
-          #sed -i -e 's/cent/cent --column-statistics=0/' regen.sh
+          sed -i -e 's/set -e/set -e\nset -x/' setup.sh
           cd ..
           bin/regen.sh
       - uses: actions/upload-artifact@v2
