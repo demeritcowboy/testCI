@@ -54,6 +54,8 @@ jobs:
           cd civicrm
           git clone -b 7.x-${{ github.event.inputs.civiver }} --depth 1 https://github.com/civicrm/civicrm-drupal.git drupal
           git clone -b ${{ github.event.inputs.civiver }} --depth 1 https://github.com/civicrm/civicrm-packages.git packages
+          COMPOSER_MEMORY_LIMIT=-1 composer install
+          npm install
           cd xml
           php GenCode.php
           cd ..
