@@ -76,6 +76,8 @@ jobs:
           sed -i -e 's/DBNAME=/DBNAME=db/' setup.conf
           sed -i -e 's/DBPORT=/DBPORT=${{ job.services.mysql.ports[3306] }}/' setup.conf
           cat setup.conf
+          ls -al
+          chmod +x setup.sh
           cd ..
           bin/regen.sh
       - uses: actions/upload-artifact@v2
