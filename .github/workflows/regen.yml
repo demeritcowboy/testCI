@@ -1,8 +1,6 @@
 name: Regen
 on:
   workflow_dispatch:
-    branches:
-      - main
     inputs:
       civiver:
         description: CiviCRM version
@@ -84,11 +82,11 @@ jobs:
           # make it easier to see what's going on if it fails
           sed -i -e 's#set -e#set -e\nset -x#' setup.sh
           # ??? maybe some mismatch between mysqldump 8 and mysql 5.7 ?!?!
-          sed -i -e 's/cent/cent --column-statistics=0/' regen.sh
+          #sed -i -e 's/cent/cent --column-statistics=0/' regen.sh
           cd ..
           bin/regen.sh
       - uses: actions/upload-artifact@v2
-        if: ${{ failure() || success() }}
+        if: ${{ success() }}
         with:
           name: upload_it
           path: '/home/runner/work/testCI/testCI/drupal/sites/all/modules/civicrm/sql/civicrm_generated.mysql'
