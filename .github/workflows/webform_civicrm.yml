@@ -22,6 +22,8 @@ jobs:
       - name: clone webform
         run: |
           cd $GITHUB_WORKSPACE
+          # todo: This works but in a fork there's a security problem, and if it's not in a fork then you don't
+          # have access to do the PR.
           gh repo list SemperIT
           exit -1
           false
