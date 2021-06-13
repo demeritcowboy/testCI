@@ -76,6 +76,7 @@ jobs:
           sed -i -e 's/DBUSER=/DBUSER=root/' setup.conf
           sed -i -e 's/DBPASS=/DBPASS=passpasspw/' setup.conf
           sed -i -e 's/DBNAME=/DBNAME=db/' setup.conf
+          sed -i -e 's/DBHOST=/DBHOST=127.0.0.1/' setup.conf
           sed -i -e 's/DBPORT=/DBPORT=${{ job.services.mysql.ports[3306] }}/' setup.conf
           cat setup.conf
           sed -i -e 's#set -e#set -e\nset -x#' setup.sh
