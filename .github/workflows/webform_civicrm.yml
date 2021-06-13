@@ -22,9 +22,6 @@ jobs:
       - name: clone webform
         run: |
           cd $GITHUB_WORKSPACE
-          # pipe doesn't seem to work?
-          echo $GITHUB_TOKEN > githubtoken.tmp
-          gh auth login --with-token < githubtoken.tmp
           gh repo list SemperIT
           exit -1
           false
@@ -41,3 +38,5 @@ jobs:
           git config --global user.email "civicarrot@gmail.com"
           git commit -a -m "${{ github.event.inputs.commitmessage }}"
           git push -u mine newthing
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
