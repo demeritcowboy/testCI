@@ -22,7 +22,9 @@ jobs:
       - name: clone webform
         run: |
           cd $GITHUB_WORKSPACE
-          echo $GITHUB_TOKEN | gh auth login --with-token
+          # pipe doesn't seem to work?
+          echo $GITHUB_TOKEN > githubtoken.tmp
+          gh auth login --with-token < githubtoken.tmp
           gh repo list SemperIT
           exit -1
           false
