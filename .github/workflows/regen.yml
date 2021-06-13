@@ -91,4 +91,4 @@ jobs:
         if: ${{ failure() || success() }}
         with:
           name: upload_it
-          path: "$GITHUB_WORKSPACE/drupal/sites/all/modules/civicrm/sql/civicrm_generated.mysql"
+          path: "/home/runner/demeritcowboy/testCI/testCI/drupal/sites/all/modules/civicrm/sql/civicrm_generated.mysql"
