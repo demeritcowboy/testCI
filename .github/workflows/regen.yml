@@ -44,7 +44,7 @@ jobs:
           cd $GITHUB_WORKSPACE
           curl -L -o drupal.tgz https://ftp.drupal.org/files/projects/drupal-7.81.tar.gz
           tar xzf drupal.tgz
-          mv drupal* drupal
+          mv drupal-7.81 drupal
           cd drupal
           composer require drush/drush:'^8'
           ./vendor/drush/drush/drush -y -l http://civi.localhost site-install standard --db-url='mysql://root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db' --site-name=TestCivi --account-pass=admin
