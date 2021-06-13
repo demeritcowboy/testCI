@@ -71,7 +71,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/drupal/sites/all/modules/civicrm/bin
           cp setup.conf.txt setup.conf
-          sed -i -e 's/CIVISOURCEDIR=/CIVISOURCEDIR=${{ env.GITHUB_WORKSPACE }}\/drupal\/sites\/all\/modules\/civicrm/' setup.conf
+          sed -i -e 's/CIVISOURCEDIR=/CIVISOURCEDIR='"$GITHUB_WORKSPACE"'\/drupal\/sites\/all\/modules\/civicrm/' setup.conf
           sed -i -e 's/DBNAME=/DBNAME=db/' setup.conf
           sed -i -e 's/DBPORT=/DBPORT=${{ job.services.mysql.ports[3306] }}/' setup.conf
           cat setup.conf
