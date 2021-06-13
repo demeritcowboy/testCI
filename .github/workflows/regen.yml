@@ -1,0 +1,75 @@
+name: Regen
+on:
+  workflow_dispatch:
+    branches:
+      - main
+    inputs:
+      civiver:
+        description: CiviCRM version
+        required: true
+        default: 'master'
+      prurl:
+        description: PR Url
+        required: false
+jobs:
+  runregen:
+    runs-on: ubuntu-latest
+    name: Run Regen
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: db
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+            php-version: 7.4
+            extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
+            coverage: none
+            tools: composer:v2
+      - name: Download cv
+        run: |
+          cd $GITHUB_WORKSPACE
+          git clone https://github.com/civicrm/cv.git civicrm-cv
+          cd civicrm-cv
+          # downloads-plugin is locked at 2.1 but that doesn't work with composer v2
+          rm composer.lock
+          COMPOSER_MEMORY_LIMIT=-1 composer install
+      - name: Download and install stuff
+        run: |
+          cd $GITHUB_WORKSPACE
+          curl -L -o drupal.tgz https://ftp.drupal.org/files/projects/drupal-7.81.tar.gz
+          tar xzf drupal.tgz
+          mv drupal* drupal
+          cd drupal
+          composer require drush/drush:'^8'
+          ./vendor/drush/drush/drush -y -l http://civi.localhost site-install standard --db-url='mysql://root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db' --site-name=TestCivi --account-pass=admin
+          chmod +w sites/default
+          cd sites/all/modules         
+          git clone -b ${{ github.event.inputs.civiver }} --depth 1 https://github.com/civicrm/civicrm-core.git civicrm
+          cd civicrm
+          git clone -b 7.x-${{ github.event.inputs.civiver }} --depth 1 https://github.com/civicrm/civicrm-drupal.git drupal
+          git clone -b ${{ github.event.inputs.civiver }} --depth 1 https://github.com/civicrm/civicrm-packages.git packages
+          cd xml
+          php GenCode.php
+          cd ..
+          $GITHUB_WORKSPACE/civicrm-cv/bin/cv core:install --cms-base-url=http://civi.localhost
+      - name: Maybe apply PR
+        if: ${{ github.event.inputs.prurl != 0 }}
+        run: |
+          cd $GITHUB_WORKSPACE
+          curl -o thingtopatch.patch ${{ github.event.inputs.prurl }}.patch
+          cd drupal/sites/all/modules/civicrm
+          git apply thingtopatch.patch
+      - name: regen
+        run: |
+          cd $GITHUB_WORKSPACE/drupal/sites/all/modules/civicrm/bin
+          cp setup.conf.txt setup.conf
+          sed -i -e 's/CIVISOURCEDIR=/CIVISOURCEDIR=${GITHUB_WORKSPACE}\/drupal\/sites\/all\/modules\/civicrm/' setup.conf
+          sed -i -e 's/DBNAME=/DBNAME=db/' setup.conf
+          sed -i -e 's/DBPORT=/DBPORT=${{ job.services.mysql.ports[3306] }}/' setup.conf
+          cat setup.conf
