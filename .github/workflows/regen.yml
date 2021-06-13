@@ -83,6 +83,8 @@ jobs:
           cat setup.conf
           # make it easier to see what's going on if it fails
           sed -i -e 's#set -e#set -e\nset -x#' setup.sh
+          # ??? maybe some mismatch between mysqldump 8 and mysql 5.7 ?!?!
+          sed -i -e 's/cent/cent --column-statistics=0/' regen.sh
           cd ..
           bin/regen.sh
       - uses: actions/upload-artifact@v2
