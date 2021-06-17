@@ -24,7 +24,6 @@ jobs:
             tools: composer:v2
       - name: php config
         run: |
-          phpdismod imagick
           php -r '$x = extension_loaded("imagick"); var_dump($x);'
           php -r '$x = function_exists("imagecreatefrompng"); var_dump($x);'
           # ignore errors
