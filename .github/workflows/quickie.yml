@@ -19,17 +19,14 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
             php-version: 7.4
-            extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
+            extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, :imagick
             coverage: none
             tools: composer:v2
       - name: php config
         run: |
-          php -v
+          # The `:imagick` in the extensions line above should remove it from the config.
           php -r '$x = extension_loaded("imagick"); var_dump($x);'
           php -r '$x = function_exists("imagecreatefrompng"); var_dump($x);'
-          # ignore errors
-          phpdismod imagick || true
-          php -r '$x = extension_loaded("imagick"); var_dump($x);'
       - name: xml pre-parse
         run: curl -L -O https://raw.githubusercontent.com/civicrm/civicrm-core/master/xml/version.xml
       - name: xml parse
