@@ -22,6 +22,11 @@ jobs:
             extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, :imagick
             coverage: none
             tools: composer:v2
+      - name: if syntax
+        if: ${{ $GITHUB_REPOSITORY == 'demeritcowboy/testCI' }}
+        run: |
+          echo "wrong repo $GITHUB_REPOSITORY"
+          exit -1
       - name: php config
         run: |
           # The `:imagick` in the extensions line above should remove it from the config.
