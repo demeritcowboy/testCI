@@ -23,10 +23,12 @@ jobs:
             coverage: none
             tools: composer:v2
       - name: if syntax
-        if: ${{ GITHUB_REPOSITORY == 'demeritcowboy/testCI' }}
+        # doesn't work:   if: ${{ "$GITHUB_REPOSITORY" == 'demeritcowboy/testCI' }}
         run: |
-          echo "wrong repo $GITHUB_REPOSITORY"
-          exit -1
+          if [ "$GITHUB_REPOSITORY" = "demeritcowboy/testCI" ]; then
+            echo "wrong repo $GITHUB_REPOSITORY"
+            exit -1
+          fi
       - name: php config
         run: |
           # The `:imagick` in the extensions line above should remove it from the config.
