@@ -25,7 +25,7 @@ jobs:
       - name: if syntax
         # doesn't work:   if: ${{ "$GITHUB_REPOSITORY" == 'demeritcowboy/testCI' }}
         run: |
-          if [ "$GITHUB_REPOSITORY" = "demeritcowboy/testCI" ]; then
+          if [ "$GITHUB_REPOSITORY" = "someother/testCI" ]; then
             echo "wrong repo $GITHUB_REPOSITORY"
             exit -1
           fi
