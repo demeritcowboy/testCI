@@ -23,7 +23,7 @@ jobs:
             coverage: none
             tools: composer:v2
       - name: if syntax
-        if: ${{ "$GITHUB_REPOSITORY" == 'demeritcowboy/testCI' }}
+        if: ${{ GITHUB_REPOSITORY == 'demeritcowboy/testCI' }}
         run: |
           echo "wrong repo $GITHUB_REPOSITORY"
           exit -1
