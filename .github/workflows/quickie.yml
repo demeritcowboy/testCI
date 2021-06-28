@@ -5,6 +5,7 @@ on:
       - main   
     inputs:
       thing:
+        # ${{ github.event.inputs.thing }}      
         description: Thing
         required: false
         default: '7.4'
@@ -13,12 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        foo: ${{ github.event.inputs.thing }}            
-    name: quick test ${{ matrix.foo }}
+        php-versions: ['7.3', '7.4']        
+    name: quick test ${{ matrix.php-versions }}
     steps:
       - uses: shivammathur/setup-php@v2
         with:
-            php-version: ${{ matrix.foo }}
+            php-version: ${{ matrix.php-versions }}
             extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, :imagick
             coverage: none
             tools: composer:v2
