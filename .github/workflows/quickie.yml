@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-versions: ['7.3', '7.4']        
+        php-versions: ${{ github.event.inputs.thing }}   
     name: quick test ${{ matrix.php-versions }}
     steps:
       - uses: shivammathur/setup-php@v2
