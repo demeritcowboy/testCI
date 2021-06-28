@@ -13,13 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        include:
-          - foo: ${{ github.event.inputs.thing }}            
+        foo: ${{ github.event.inputs.thing }}            
     name: quick test ${{ matrix.foo }}
     steps:
       - uses: shivammathur/setup-php@v2
         with:
-            php-versions: ${{ matrix.foo }}
+            php-version: ${{ matrix.foo }}
             extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, :imagick
             coverage: none
             tools: composer:v2
