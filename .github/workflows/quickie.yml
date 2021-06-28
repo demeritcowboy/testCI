@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: shivammathur/setup-php@v2
         with:
-            php-version: ${{ matrix.foo }}
+            php-versions: ${{ matrix.foo }}
             extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, :imagick
             coverage: none
             tools: composer:v2
