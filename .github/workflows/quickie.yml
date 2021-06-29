@@ -60,7 +60,8 @@ jobs:
           echo "RUNSTATUS=FAIL" >> $GITHUB_ENV
       - name: finale
         run: |
-          thing=${{ github.event.inputs.thing }}
+          # ${{ github.event.inputs.thing }}
+          thing=https://lab.civicrm.org/something/else.git
           temp1=${thing%/-/merge_requests/*}
           projectname=${temp1#https://*/}
           # close enough?
