@@ -12,21 +12,22 @@ on:
         # so e.g. '"7.3", "7.4"' becomes ["7.3", "7.4"]
         default: '"7.4"'
 jobs:
-  setup-matrix:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup matrix combinations
-        id: setup-matrix-combinations
-        run: |
-          MATRIX_PARAMS_COMBINATIONS='{"php-versions": "7.3", "cver": "1"}, {"php-versions": "7.4", "cver": "2"}'
-          echo ::set-output name=matrix-combinations::{\"php-versions\":[${{ github.event.inputs.thing }}],\"include\":[$MATRIX_PARAMS_COMBINATIONS]}
-    outputs:
-      matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
+#  setup-matrix:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Setup matrix combinations
+#        id: setup-matrix-combinations
+#        run: |
+#          MATRIX_PARAMS_COMBINATIONS='{"php-versions": "7.3", "cver": "1"}, {"php-versions": "7.4", "cver": "2"}'
+#          echo ::set-output name=matrix-combinations::{\"php-versions\":[${{ github.event.inputs.thing }}],\"include\":[$MATRIX_PARAMS_COMBINATIONS]}
+#    outputs:
+#      matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
   phpunit:
     runs-on: ubuntu-latest
-    needs: setup-matrix
+#    needs: setup-matrix
     strategy:
-      matrix: ${{ fromJson(needs.setup-matrix.outputs.matrix-combinations) }}        
+      #matrix: ${{ fromJson(needs.setup-matrix.outputs.matrix-combinations) }}        
+      matrix: ${{ fromJson(github.event.inputs.thing) }}        
     name: quick test ${{ github.event.inputs.thing }}
     steps:
       - uses: shivammathur/setup-php@v2
