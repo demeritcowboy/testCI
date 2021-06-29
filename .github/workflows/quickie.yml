@@ -8,17 +8,25 @@ on:
         # ${{ github.event.inputs.thing }}      
         description: Thing
         required: false
-        # The value is a json string, and we use fromJSON below.
-        default: '["7.4"]'
+        # The value gets interpreted as a json string put between [] (so an array), and we use fromJSON below.
+        # so e.g. '"7.3", "7.4"' becomes ["7.3", "7.4"]
+        default: '"7.4"'
 jobs:
+  setupmatrix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup matrix combinations
+        id: setup-matrix-combinations
+        run: |
+          MATRIX_PARAMS_COMBINATIONS='{"cver": "1"}, {"cver": "2"}'
+          echo ::set-output name=matrix-combinations::{\"php-versions\":[${{ github.event.inputs.thing }}],\"include\":[$MATRIX_PARAMS_COMBINATIONS]}
+    outputs:
+      matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
   phpunit:
     runs-on: ubuntu-latest
     strategy:
-      matrix:
-        php-versions: ${{fromJSON(github.event.inputs.thing)}}
-        include:
-          - cver: toJSON(["1", "2"])
-    name: quick test ${{ matrix.php-versions }}
+      matrix: ${{ fromJson(needs.setup-matrix.outputs.matrix-combinations) }}        
+    name: quick test ${{ github.event.inputs.thing }}
     steps:
       - uses: shivammathur/setup-php@v2
         with:
@@ -67,7 +75,6 @@ jobs:
           echo "RUNSTATUS=FAIL" >> $GITHUB_ENV
       - name: finale
         run: |
-          # ${{ github.event.inputs.thing }}
           thing=https://lab.civicrm.org/something/else.git
           temp1=${thing%/-/merge_requests/*}
           projectname=${temp1#https://*/}
