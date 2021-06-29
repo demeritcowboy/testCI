@@ -27,10 +27,7 @@ jobs:
 #    needs: setup-matrix
     strategy:
       #matrix: ${{ fromJson(needs.setup-matrix.outputs.matrix-combinations) }}        
-      #matrix: ${{ fromJson(github.event.inputs.thing) }}        
-      matrix:
-        php-versions: ["7.3", "7.4"]
-        cver: ["1", "2"]
+      matrix: ${{ fromJson(github.event.inputs.thing) }}           
     name: quick test ${{ github.event.inputs.thing }}
     steps:
       - uses: shivammathur/setup-php@v2
