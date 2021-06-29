@@ -16,6 +16,8 @@ jobs:
     strategy:
       matrix:
         php-versions: ${{fromJSON(github.event.inputs.thing)}}
+        include:
+          - cver: toJSON(["1", "2"])
     name: quick test ${{ matrix.php-versions }}
     steps:
       - uses: shivammathur/setup-php@v2
@@ -31,6 +33,10 @@ jobs:
             echo "wrong repo $GITHUB_REPOSITORY"
             exit -1
           fi
+      - name: use matrix vars
+        env:
+          CIVERT: ${{ matrix.cver }}
+        run: echo $CIVERT
       - name: php config
         run: |
           # The `:imagick` in the extensions line above should remove it from the config.
