@@ -9,7 +9,7 @@ on:
         description: Thing
         required: false
         # The value is a json string, and we use fromJSON below.
-        default: '"7.4"'
+        default: '["7.4"]'
 jobs:
   phpunit:
     runs-on: ubuntu-latest
