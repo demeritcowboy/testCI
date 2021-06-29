@@ -8,9 +8,8 @@ on:
         # ${{ github.event.inputs.thing }}      
         description: Thing
         required: false
-        # The value gets interpreted as a json string put between [] (so an array), and we use fromJSON below.
-        # so e.g. '"7.3", "7.4"' becomes ["7.3", "7.4"]
-        default: '"7.4"'
+        # json string
+        default: '{"php-versions":["7.3","7.4"],"cver":["5.1", "5.2"]}'
 jobs:
 #  setup-matrix:
 #    runs-on: ubuntu-latest
