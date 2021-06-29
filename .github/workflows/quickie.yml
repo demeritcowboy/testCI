@@ -18,7 +18,7 @@ jobs:
       - name: Setup matrix combinations
         id: setup-matrix-combinations
         run: |
-          MATRIX_PARAMS_COMBINATIONS='{"cver": "1"}, {"cver": "2"}'
+          MATRIX_PARAMS_COMBINATIONS='{"php-versions": "7.3", "cver": "1"}, {"php-versions": "7.4", "cver": "2"}'
           echo ::set-output name=matrix-combinations::{\"php-versions\":[${{ github.event.inputs.thing }}],\"include\":[$MATRIX_PARAMS_COMBINATIONS]}
     outputs:
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
