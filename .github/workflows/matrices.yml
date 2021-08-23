@@ -7,10 +7,11 @@ on:
       matrix:
         description: matrix in json format
         required: true
-        # To get the desired effect, scalar php-versions needs to be included in each include.
-        # If you don't have it in the include, then it only uses the last include.
+        # To get the desired effect is difficult.
+        # If you don't have it in the include or have more than one php-versions with the same other vars in the include, then it only uses the last include for that version.
         # If you try to put arrays into the include for php-versions, then the setup-php doesn't like it.
-        default: '{"php-versions":["7.3","7.4"],"include":[{"php-versions":"7.3","drupal":"~9.1.1","civicrm":"5.40.x-dev"},{"php-versions":"7.4","drupal":"~9.1.1","civicrm":"5.40.x-dev"},{"php-versions":"7.3","drupal":"~9.2.1","civicrm":"dev-master"},{"php-versions":"7.4","drupal":"~9.2.1","civicrm":"dev-master"}]}'
+        # So it seems you can only have one php-version if you want other variables in the matrix?
+        default: '{"php-versions":["7.3","7.4"],"include":[{"php-versions":"7.3","drupal":"~9.1.1","civicrm":"5.40.x-dev"},{"php-versions":"7.4","drupal":"~9.2.1","civicrm":"dev-master"}]}'
 jobs:
   phpunit:
     runs-on: ubuntu-latest
