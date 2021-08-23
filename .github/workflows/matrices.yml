@@ -28,6 +28,7 @@ jobs:
             tools: composer:v2
       - name: Foo
         run: |
+          echo ${{ github.event.inputs.matrix }}
           echo ${{ matrix.drupal }}
           echo ${{ matrix.civicrm }}
           php -v
