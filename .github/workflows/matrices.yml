@@ -7,7 +7,7 @@ on:
       matrix:
         description: matrix in json format
         required: true
-        default: '{"php-versions":["7.4"],"drupal":["~9.1.1"],"civicrm":["dev-master"]}'
+        default: '{"php-versions":["7.3","7.4"],"drupal":["~9.1.1","~9.2.1"],"civicrm":["5.40.x-dev", "dev-master"]}'
 jobs:
   phpunit:
     runs-on: ubuntu-latest
