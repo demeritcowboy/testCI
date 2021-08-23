@@ -1,0 +1,29 @@
+name: Testing matrix combinations from json
+on:
+  workflow_dispatch:
+    branches:
+      - main
+    inputs:
+      matrix:
+        description: matrix in json format
+        required: true
+        default: '{"php-versions":["7.4"],"drupal":["~9.1.1"],"civicrm":["dev-master"]}'
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(github.event.inputs.matrix) }}
+    name: blah
+    steps:
+      - uses: actions/checkout@v2
+      - uses: shivammathur/setup-php@v2
+        with:
+            php-version: ${{ matrix.php-versions }}
+            extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, :imagick
+            coverage: none
+            tools: composer:v2
+      - name: Foo
+        run: |
+          echo ${{ matrix.drupal }}
+          echo ${{ matrix.civicrm }}
+          php -v
