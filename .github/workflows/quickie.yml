@@ -42,6 +42,12 @@ jobs:
             echo "wrong repo $GITHUB_REPOSITORY"
             exit -1
           fi
+      - name: versioncompare
+        run: |
+          COMPAREVERSIONS=`php -r 'echo version_compare("5.41.0", "${{ matrix.cver }}");'`
+          if [ "$COMPAREVERSIONS" = "1" ]; then
+            echo "do it since less than 5.41.0"
+          fi
       - name: use matrix vars
         env:
           CIVERT: ${{ matrix.cver }}
