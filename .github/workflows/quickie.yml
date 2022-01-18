@@ -78,7 +78,7 @@ jobs:
         uses: mavrosxristoforos/get-xml-info@1.0
         with:
           xml-file: 'info.xml'
-          xpath: '//requires'
+          xpath: '//requires/ext'
       - name: use parsed xml 2
         run: |
           requiresnode=${{ steps.xmlparse2.outputs.info }}          
