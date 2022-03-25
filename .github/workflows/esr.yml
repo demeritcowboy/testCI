@@ -1,4 +1,4 @@
-name: Integration Tests
+name: Integration Tests ESR
 on:
   workflow_dispatch:
     branches:
