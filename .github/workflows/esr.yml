@@ -58,3 +58,8 @@ jobs:
         run: |
           cd ~/drupal
           COMPOSER_MEMORY_LIMIT=-1 composer require civicrm/civicrm-asset-plugin:'~1.1' civicrm/civicrm-{core,packages,drupal-8}:${{ matrix.civicrm }}
+      - name: Confirm it is ESR
+        run: |
+          cd ~/drupal
+          grep -n checkAnonEditContribution vendor/civicrm/civicrm-core/CRM/Utils/Check/Component/Security.php
+
