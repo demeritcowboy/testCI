@@ -61,5 +61,5 @@ jobs:
       - name: Confirm it is ESR
         run: |
           cd ~/drupal
-          grep -n checkAnonEditContribution vendor/civicrm/civicrm-core/CRM/Utils/Check/Component/Security.php
+          grep -n checkAnonPermissions vendor/civicrm/civicrm-core/CRM/Utils/Check/Component/Security.php
 
