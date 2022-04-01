@@ -1,5 +1,7 @@
 name: Testing matrix combinations from json
 on:
+  schedule:
+  - cron: '18 16 * * *'
   workflow_dispatch:
     branches:
       - main
