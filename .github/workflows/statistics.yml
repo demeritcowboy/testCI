@@ -1,7 +1,5 @@
 name: statistics 
-on:
-  schedule:
-  - cron: '5 17 * * *'
+on:  
   workflow_dispatch:
     branches:
       - main
