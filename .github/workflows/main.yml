@@ -68,7 +68,7 @@ jobs:
       - name: Download CiviCRM ${{ matrix.civicrm }}
         run: |
           cd ~/drupal
-          COMPOSER_MEMORY_LIMIT=-1 composer require civicrm/civicrm-asset-plugin:'~1.1' civicrm/civicrm-{core,packages,drupal-8}:${{ matrix.civicrm }} --no-suggest --prefer-dist
+          COMPOSER_MEMORY_LIMIT=-1 composer require civicrm/civicrm-asset-plugin:'~1.1' civicrm/civicrm-{core,packages,drupal-8}:${{ matrix.civicrm }} --prefer-dist
       - name: Download mink-civicrm-helpers
         run: |
           cd ~/drupal
@@ -88,13 +88,13 @@ jobs:
         if: ${{ github.event.inputs.prurl != 0 }}
         run: |
           cd  ~/drupal/web/sites/default/files/civicrm/ext/thingtotest
-          curl -o thingtopatch.patch ${{ github.event.inputs.prurl }}.patch
+          curl -L -o thingtopatch.patch ${{ github.event.inputs.prurl }}.patch
           git apply thingtopatch.patch    
       - name: Apply Core PR
         if: ${{ github.event.inputs.coreprurl != 0 }}
         run: |
           cd  ~/drupal/vendor/civicrm/civicrm-core
-          curl -o thingtopatch.patch ${{ github.event.inputs.coreprurl }}.patch
+          curl -L -o thingtopatch.patch ${{ github.event.inputs.coreprurl }}.patch
           git apply thingtopatch.patch      
       - name: Run PHPUnit
         run: |
