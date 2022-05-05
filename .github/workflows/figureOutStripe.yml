@@ -89,6 +89,9 @@ jobs:
           cd ~/drupal/web/sites/default/files/civicrm/ext
           git clone https://lab.civicrm.org/extensions/stripe.git thingtotest
           git clone https://lab.civicrm.org/extensions/mjwshared.git mjwshared
+          # hmm?
+          cd thingtotest
+          git apply $GITHUB_WORKSPACE/stripe.patch
       - name: Run PHPUnit
         run: |
           export PATH=$PATH:$GITHUB_WORKSPACE/civicrm-cv/bin
@@ -101,4 +104,4 @@ jobs:
         env:
           COMPOSER_MEMORY_LIMIT: -1
           SYMFONY_DEPRECATIONS_HELPER: weak
-      
+    
