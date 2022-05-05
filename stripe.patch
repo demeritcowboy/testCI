@@ -1,0 +1,13 @@
+diff --git a/tests/phpunit/CRM/Stripe/BaseTest.php b/tests/phpunit/CRM/Stripe/BaseTest.php
+index 1f25b7c..8b7f39a 100644
+--- a/tests/phpunit/CRM/Stripe/BaseTest.php
++++ b/tests/phpunit/CRM/Stripe/BaseTest.php
+@@ -181,7 +181,7 @@ abstract class CRM_Stripe_BaseTest extends \PHPUnit\Framework\TestCase implement
+     if (array_key_exists('trxn_id', $ret)) {
+       $this->trxn_id = $ret['trxn_id'];
+       $contribution = new CRM_Contribute_BAO_Contribution();
+-      $contribution->id = $params['contribution_id'];
++      $contribution->id = $params['contribution_id'] ?? $params['contributionID'];
+       $contribution->trxn_id = $ret['trxn_id'];
+       $contribution->save();
+     }
