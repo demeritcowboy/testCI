@@ -89,6 +89,8 @@ jobs:
           cd ~/drupal/web/sites/default/files/civicrm/ext
           git clone https://lab.civicrm.org/extensions/stripe.git thingtotest
           git clone https://lab.civicrm.org/extensions/mjwshared.git mjwshared
+          # sanity check
+          ls -al $GITHUB_WORKSPACE
           # hmm?
           cd thingtotest
           git apply $GITHUB_WORKSPACE/stripe.patch
