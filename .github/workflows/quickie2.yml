@@ -1,0 +1,23 @@
+name: quicktest2
+on:
+  workflow_dispatch:
+    branches:
+      - main   
+jobs:
+  quickie:
+    runs-on: ubuntu-latest
+    name: quick test
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+            php-version: ${{ matrix.php-versions }}
+            extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, :imagick
+            coverage: none
+            tools: composer:v2
+      - name: dependencies
+        run: |
+          git clone https://lab.civicrm.org/extensions/stripe.git          
+          DEPS=`php -r '$xml = simplexml_load_file("stripe/info.xml"); $deps = array(); foreach ($xml->requires as $req) { $deps[] = $req->ext; } echo implode(" ", $deps);'`
+          for e in $DEPS; do
+            echo $e
+          done
