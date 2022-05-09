@@ -16,8 +16,17 @@ jobs:
             tools: composer:v2
       - name: dependencies
         run: |
-          git clone https://lab.civicrm.org/extensions/stripe.git          
+          git clone https://lab.civicrm.org/extensions/stripe.git
           DEPS=`php -r '$xml = simplexml_load_file("stripe/info.xml"); $deps = array(); foreach ($xml->requires as $req) { $deps[] = $req->ext; } echo implode(" ", $deps);'`
-          for e in $DEPS; do
-            echo $e
-          done
+          if [ -n "$DEPS" ]; then
+            for e in $DEPS; do
+              echo $e
+            done
+          fi
+          git clone https://lab.civicrm.org/extensions/cdntaxreceipts.git
+          DEPS=`php -r '$xml = simplexml_load_file("cdntaxreceipts/info.xml"); $deps = array(); foreach ($xml->requires as $req) { $deps[] = $req->ext; } echo implode(" ", $deps);'`
+          if [ -n "$DEPS" ]; then
+            for e in $DEPS; do
+              echo $e
+            done
+          fi
