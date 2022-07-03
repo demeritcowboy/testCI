@@ -29,6 +29,8 @@ jobs:
             extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
             coverage: none
             tools: composer:v2        
+        env:
+          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Get composer cache directory
         id: composercache
         run: echo "::set-output name=dir::$(composer global config cache-files-dir)"
@@ -69,4 +71,11 @@ jobs:
         run: |
           cd ~/drupal
           COMPOSER_MEMORY_LIMIT=-1 composer require drupal/token:^1.9
-      
+      - name: Check
+        run: |
+          cd ~/drupal
+          ls -al
+          cd web
+          ls -al
+          cd libraries
+          ls -al
