@@ -74,7 +74,7 @@ jobs:
       - name: test speed patch
         run: |
           cd ~/drupal/web/modules/contrib/civicrm
-          curl -L -o speed.diff https://github.com/civicrm/civicrm-drupal-8/commit/0b49593599bda2fdb22779690167155a838ec68d.diff
+          curl -L -o speed.diff https://github.com/civicrm/civicrm-drupal-8/commit/6d87bbb6197153681dd147608fd44315423e74c7.diff
           git apply speed.diff
       - name: Download mink-civicrm-helpers
         run: |
