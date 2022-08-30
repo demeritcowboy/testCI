@@ -67,6 +67,11 @@ jobs:
         run: |
           cd ~/drupal
           COMPOSER_MEMORY_LIMIT=-1 composer require civicrm/civicrm-asset-plugin:'~1.1' civicrm/civicrm-{core,packages,drupal-8}:${{ matrix.civicrm }} --prefer-dist
+      - name: test speed patch
+        run: |
+          cd ~/drupal/web/modules/contrib/civicrm
+          curl -L -o speed.diff https://github.com/civicrm/civicrm-drupal-8/commit/01b3f0539274d5f62d85de60fb49c26e26acc96c.diff
+          git apply speed.diff
       - name: Download mink-civicrm-helpers
         run: |
           cd ~/drupal
