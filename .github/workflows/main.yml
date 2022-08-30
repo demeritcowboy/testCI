@@ -4,8 +4,6 @@ on:
     branches:
       - main
   workflow_dispatch:
-    branches:
-      - main
     inputs:
       prurl:
         description: PR Url
@@ -22,7 +20,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - drupal: '~9.3.0'
+          - drupal: '~9.4.0'
             civicrm: 'dev-master'
     name: Drupal ${{ matrix.drupal }} | CiviCRM ${{ matrix.civicrm }}
     services:
@@ -103,7 +101,7 @@ jobs:
           # The xml config file should have a bootstrap attribute pointing to a proper bootstrap file, which needs to be similar to drupal's test bootstrap file.
           ~/drupal/vendor/bin/phpunit -c phpunit.mink.xml.dist tests/phpunit/Mink
         env:
-          SYMFONY_DEPRECATIONS_HELPER: weak
+          SYMFONY_DEPRECATIONS_HELPER: 999999
           DEV_EXTENSION_DIR: /home/runner/drupal/web/sites/default/files/civicrm/ext
           SIMPLETEST_DB: mysql://root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db
           SIMPLETEST_BASE_URL: http://127.0.0.1:8080
