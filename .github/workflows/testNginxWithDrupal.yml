@@ -42,8 +42,6 @@ jobs:
           echo '<?php phpinfo();' > ~/drupal/web/index.php
           curl http://127.0.0.1:8080/index.php
           rm -rf ~/drupal
-          exit 1
-          exit 0
       - name: Download Drupal
         run: |
           COMPOSER_MEMORY_LIMIT=-1 composer create-project drupal/recommended-project:~9.4.0 ~/drupal --no-interaction
