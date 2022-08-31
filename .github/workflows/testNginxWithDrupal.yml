@@ -29,10 +29,10 @@ jobs:
           sudo cp $GITHUB_WORKSPACE/drupal.nginx.conf /etc/nginx/sites-available/default
           # sledgehammer approach to configuring php
           sudo rm -f /etc/php/7.4/fpm/conf.d/20-xdebug.ini
+          sudo rm -f /etc/php/7.4/mods-available/xdebug.ini
           sudo sed -i 's/memory_limit = 128M/memory_limit = -1/' /etc/php/7.4/fpm/php.ini
-          grep memory_limit /etc/php/7.4/fpm/php.ini
           sudo sed -i 's/max_execution_time = 30/max_execution_time = 0/' /etc/php/7.4/fpm/php.ini
-          grep max_exec /etc/php/7.4/fpm/php.ini
+          cat /etc/php/7.4/fpm/php.ini
           ls -lR /etc/php/7.4
           sudo systemctl start php7.4-fpm
           sudo systemctl start nginx
