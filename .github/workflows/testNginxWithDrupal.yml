@@ -1,0 +1,50 @@
+name: test nginx+drupal
+on:
+  workflow_dispatch:
+jobs:
+  nginxdrupal:
+    runs-on: ubuntu-latest
+    name: see if this works
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: db
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, :imagick
+          coverage: none
+          tools: composer:v2
+      - name: setup nginx
+        run: |
+          sudo cp /usr/sbin/php-fpm7.4 /usr/bin/php-fpm
+          
+          sudo systemctl start nginx
+      - name: sanity check
+        run: |
+          curl http://127.0.0.1/
+      - name: Download Drupal
+        run: |
+          COMPOSER_MEMORY_LIMIT=-1 composer create-project drupal/recommended-project:~9.4.0 ~/drupal --no-interaction
+          cd ~/drupal
+          composer config extra.enable-patching true
+          composer config extra.compile-mode all
+          composer config minimum-stability dev
+          composer config prefer-stable true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-compile-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-downloads-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/civicrm-asset-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
+          # COMPOSER_MEMORY_LIMIT=-1 composer require drupal/core-dev-pinned:${{ matrix.drupal }}
+          COMPOSER_MEMORY_LIMIT=-1 composer require drush/drush
+      - name: Install Drupal
+        run: |
+          cd ~/drupal
+          ./vendor/drush/drush/drush -y -l http://127.0.0.1 site-install standard --db-url='mysql://root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db' --site-name=TestDrupal --account-pass=admin
+          chmod +w web/sites/default
