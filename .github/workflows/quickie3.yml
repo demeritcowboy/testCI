@@ -23,4 +23,7 @@ jobs:
           #cat /etc/nginx/sites-available/default
           #sudo cp /usr/sbin/php-fpm7.4 /usr/bin/php-fpm
           #php-fpm -v
-          php -i
+          mkdir foo
+          echo '<?php phpinfo();' > foo/index.php
+          php -S 127.0.0.1:8080 -t foo/
+          curl http://127.0.0.1:8080/
