@@ -6,15 +6,12 @@ jobs:
     runs-on: ubuntu-latest
     name: quick test
     steps:
-      #- uses: shivammathur/setup-php@v2
-      #  with:
-      #      php-version: 8.0
-      #      extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, :imagick
-      #      coverage: none
-      #      tools: composer:v2
-      - name: is there a built-in php here?
-        run: |
-          php -v
+      - uses: shivammathur/setup-php@v2
+        with:
+            php-version: 7.4
+            extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, :imagick
+            coverage: none
+            tools: composer:v2
       - name: is nginx here?
         run: |
           #cat /etc/nginx/nginx.conf
