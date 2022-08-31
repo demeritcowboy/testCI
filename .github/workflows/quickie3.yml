@@ -24,4 +24,5 @@ jobs:
           #ls -lR /usr/share/nginx
           #ls -lR /etc/nginx
           #cat /etc/nginx/sites-available/default
-          sudo systemctl status nginx 
+          /usr/sbin/php-fpm -v
+          php-fpm -v
