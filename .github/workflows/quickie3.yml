@@ -23,4 +23,5 @@ jobs:
           #nginx -V
           #ls -lR /usr/share/nginx
           #ls -lR /etc/nginx
-          cat /etc/nginx/sites-available/default
+          #cat /etc/nginx/sites-available/default
+          sudo systemctl status nginx 
