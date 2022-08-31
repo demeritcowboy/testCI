@@ -27,6 +27,14 @@ jobs:
           #sudo cp /usr/sbin/php-fpm7.4 /usr/bin/php-fpm          
           cat /etc/nginx/sites-available/default
           sudo cp $GITHUB_WORKSPACE/drupal.nginx.conf /etc/nginx/sites-available/default
+          # sledgehammer approach to configuring php
+          rm -f /etc/php/7.4/fpm/conf.d/20-xdebug.ini
+          cat /etc/php/7.4/fpm/php.ini
+          grep -r memory_limit /etc/php/7.4/fpm/conf.d
+          grep -r max_exec /etc/php/7.4/fpm/conf.d       
+          ls -lR /etc/php/7.4
+          exit 1
+          exit 0
           sudo systemctl start php7.4-fpm
           sudo systemctl start nginx
       - name: sanity check
