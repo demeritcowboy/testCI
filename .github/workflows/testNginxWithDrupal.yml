@@ -23,8 +23,10 @@ jobs:
           tools: composer:v2
       - name: setup nginx
         run: |
-          sudo cp /usr/sbin/php-fpm7.4 /usr/bin/php-fpm
-          
+          #sudo cp /usr/sbin/php-fpm7.4 /usr/bin/php-fpm          
+          cat /etc/nginx/sites-available/default
+          sudo cp ~/drupal.nginx.conf /etc/nginx/sites-available/default
+          sudo systemctl start php7.4-fpm
           sudo systemctl start nginx
       - name: sanity check
         run: |
@@ -48,3 +50,6 @@ jobs:
           cd ~/drupal
           ./vendor/drush/drush/drush -y -l http://127.0.0.1 site-install standard --db-url='mysql://root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db' --site-name=TestDrupal --account-pass=admin
           chmod +w web/sites/default
+      - name: sanity check 2
+        run: |
+          curl http://127.0.0.1/
