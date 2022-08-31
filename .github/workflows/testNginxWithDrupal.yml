@@ -25,7 +25,7 @@ jobs:
         run: |
           #sudo cp /usr/sbin/php-fpm7.4 /usr/bin/php-fpm          
           cat /etc/nginx/sites-available/default
-          sudo cp ~/drupal.nginx.conf /etc/nginx/sites-available/default
+          sudo cp $GITHUB_WORKSPACE/drupal.nginx.conf /etc/nginx/sites-available/default
           sudo systemctl start php7.4-fpm
           sudo systemctl start nginx
       - name: sanity check
