@@ -21,4 +21,4 @@ jobs:
           #ls -lR /usr/share/nginx
           #ls -lR /etc/nginx
           #cat /etc/nginx/sites-available/default
-          /usr/sbin/php-fpm -v
+          ls -al /usr/sbin
