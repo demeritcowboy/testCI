@@ -25,7 +25,9 @@ jobs:
           #php-fpm -v
           php -S 127.0.0.1:8080 -t foo/ &
       - name: separate step to buy time
+        run: |
           mkdir foo
           echo '<?php phpinfo();' > foo/index.php          
       - name: buy more time
+        run: |
           curl http://127.0.0.1:8080/
