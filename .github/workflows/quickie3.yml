@@ -17,6 +17,7 @@ jobs:
           php -v
       - name: is nginx here?
         run: |
-          cat /etc/nginx/nginx.conf
-          sudo systemctl start nginx 
-          curl http://127.0.0.1:80/
+          #cat /etc/nginx/nginx.conf
+          #sudo systemctl start nginx 
+          #curl http://127.0.0.1:80/
+          nginx -V
