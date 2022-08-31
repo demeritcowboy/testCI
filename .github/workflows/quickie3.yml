@@ -21,5 +21,6 @@ jobs:
           #sudo systemctl start nginx 
           #curl http://127.0.0.1:80/
           #nginx -V
-          ls -lR /usr/share/nginx
-          ls -lR /etc/nginx
+          #ls -lR /usr/share/nginx
+          #ls -lR /etc/nginx
+          cat /etc/nginx/sites-available/default
