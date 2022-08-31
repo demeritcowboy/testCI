@@ -31,7 +31,10 @@ jobs:
           sudo systemctl start nginx
       - name: sanity check
         run: |
-          curl http://127.0.0.1/
+          mkdir ~/drupal
+          echo '<?php phpinfo();' > ~/drupal/index.php
+          curl http://127.0.0.1:8080/index.php
+          rm -f ~/drupal/index.php
       - name: Download Drupal
         run: |
           COMPOSER_MEMORY_LIMIT=-1 composer create-project drupal/recommended-project:~9.4.0 ~/drupal --no-interaction
@@ -53,4 +56,4 @@ jobs:
           chmod +w web/sites/default
       - name: sanity check 2
         run: |
-          curl http://127.0.0.1/
+          curl http://127.0.0.1:8080/
