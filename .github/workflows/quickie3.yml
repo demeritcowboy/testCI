@@ -23,11 +23,11 @@ jobs:
           #cat /etc/nginx/sites-available/default
           #sudo cp /usr/sbin/php-fpm7.4 /usr/bin/php-fpm
           #php-fpm -v
-          php -S 127.0.0.1:8080 -t foo/ &
+          mkdir ~/foo
+          php -S 127.0.0.1:8080 -t ~/foo &
       - name: separate step to buy time
-        run: |
-          mkdir foo
-          echo '<?php phpinfo();' > foo/index.php          
+        run: |          
+          echo '<?php phpinfo();' > ~/foo/index.php          
       - name: buy more time
         run: |
           curl http://127.0.0.1:8080/
