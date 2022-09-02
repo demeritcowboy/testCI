@@ -63,7 +63,7 @@ jobs:
           cd ~/drupal
           #COMPOSER_MEMORY_LIMIT=-1 composer require civicrm/civicrm-asset-plugin:'~1.1' civicrm/civicrm-{core,packages,drupal-8}:${{ github.event.inputs.civiver }}
           # When using a commit hash, need to fake it for packages and drupal repos, since they won't have the same hash
-          $basever = `php -r '$v = "${{ github.event.inputs.civiver }}"; if (substr($v, 0, 10) == "dev-master") { echo "dev-master"; } else { if (($pos = strpos($v, "#")) !== FALSE) { echo substr($v, 0, $pos); } else { echo $v; }}'`
+          basever=`php -r '$v = "${{ github.event.inputs.civiver }}"; if (substr($v, 0, 10) == "dev-master") { echo "dev-master"; } else { if (($pos = strpos($v, "#")) !== FALSE) { echo substr($v, 0, $pos); } else { echo $v; }}'`
           COMPOSER_MEMORY_LIMIT=-1 composer require civicrm/civicrm-asset-plugin:'~1.1' civicrm/civicrm-{packages,drupal-8}:$basever civicrm/civicrm-core:${{ github.event.inputs.civiver }}
           COMPOSER_MEMORY_LIMIT=-1 composer require phpunit/phpunit:'^8.5' drush/drush
       - name: Install Drupal
