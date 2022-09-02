@@ -82,6 +82,6 @@ jobs:
           export CIVICRM_SETTINGS=~/drupal/web/sites/default/civicrm.settings.php
           cd ~/drupal/vendor/civicrm/civicrm-core
           # Sanity check to see if plain core tests run
-          ../../bin/phpunit tests/phpunit/CRM/Case/BAO/CaseTest.php
+          ../../bin/phpunit tests/phpunit/CRM/Activity
         env:
           COMPOSER_MEMORY_LIMIT: -1
