@@ -44,7 +44,7 @@ jobs:
           COMPOSER_MEMORY_LIMIT=-1 composer install
       - name: Download Drupal
         run: |
-          COMPOSER_MEMORY_LIMIT=-1 composer create-project drupal/recommended-project:${{ matrix.drupal }} ~/drupal --no-interaction --no-install
+          COMPOSER_MEMORY_LIMIT=-1 composer create-project drupal/recommended-project:'^9' ~/drupal --no-interaction --no-install
           cd ~/drupal
           composer config extra.enable-patching true
           composer config extra.compile-mode all
