@@ -75,11 +75,11 @@ jobs:
         run: |
           cd ~/drupal
           $GITHUB_WORKSPACE/civicrm-cv/bin/cv core:install --cms-base-url=http://civi.localhost -m loadGenerated=1      
-      - name: lets see
-        run: |
-          cd ~/drupal/vendor/civicrm/civicrm-core
-          curl -L -o 7.diff https://github.com/civicrm/civicrm-core/commit/473218f65b.diff
-          git apply 7.diff
+      #- name: lets see
+      #  run: |
+      #    cd ~/drupal/vendor/civicrm/civicrm-core
+      #    curl -L -o 7.diff https://github.com/civicrm/civicrm-core/commit/473218f65b.diff
+      #    git apply 7.diff
       - name: Run PHPUnit
         run: |
           export PATH=$PATH:$GITHUB_WORKSPACE/civicrm-cv/bin
