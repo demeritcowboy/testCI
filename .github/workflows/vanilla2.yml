@@ -78,7 +78,7 @@ jobs:
       - name: lets see
         run: |
           cd ~/drupal/vendor/civicrm/civicrm-core
-          curl -L -o 7.diff https://github.com/civicrm/civicrm-core/commit/7340d402109dda800be880a4017f3778d1b2206d.diff
+          curl -L -o 7.diff https://github.com/civicrm/civicrm-core/commit/f6d70b9ef541a3a31c7e5b9d1e135dc1614d3653.diff
           git apply 7.diff
       - name: Run PHPUnit
         run: |
