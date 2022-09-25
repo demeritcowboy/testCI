@@ -15,7 +15,8 @@ jobs:
       - name: env1
         run: |
           echo "EXITEARLY=n" >> $GITHUB_ENV
-          if [ "a" != "a" ]; then
+          foostate=`echo '{"rabbit":"a"}' | jq -r .rabbit`
+          if [ "$foostate" != "a" ]; then
             echo "EXITEARLY=y" >> $GITHUB_ENV
           fi
       - name: env2
