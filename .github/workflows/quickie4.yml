@@ -19,10 +19,10 @@ jobs:
             echo "EXITEARLY=y" >> $GITHUB_ENV
           fi
       - name: env2
-        if: ${{ env.EXITEARLY = "y" }}
+        if: ${{ env.EXITEARLY == "y" }}
         run: |
             echo Exiting early
       - name: env3
-        if: ${{ (success() || failure()) && (env.EXITEARLY = "y") }}
+        if: ${{ (success() || failure()) && (env.EXITEARLY == "y") }}
         run: |
             echo Exited early earlier
