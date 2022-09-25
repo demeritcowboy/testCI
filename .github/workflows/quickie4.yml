@@ -15,7 +15,7 @@ jobs:
       - name: env1
         run: |
           echo "EXITEARLY=n" >> $GITHUB_ENV
-          if [ "a" != "b" ]; then
+          if [ "a" != "a" ]; then
             echo "EXITEARLY=y" >> $GITHUB_ENV
           fi
       - name: env2
