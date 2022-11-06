@@ -1,8 +1,8 @@
 name: Drupal 10 install
 on:
   schedule:
-    # Run daily at 17:13 GMT
-    - cron: '13 17 * * *'
+    # Run daily at 06:13 GMT
+    - cron: '13 06 * * *'
   workflow_dispatch:
     branches:
       - main
@@ -92,7 +92,6 @@ jobs:
         run: |
           export PATH=$PATH:$GITHUB_WORKSPACE/civicrm-cv/bin
           cd /home/runner/drupal10
-          cat vendor/composer/include_paths.php
           cv vars:fill
           sed -i -e 's#dbUser:dbPass@dbHost/dbName#root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db#' ~/.cv.json
           export CIVICRM_UF=UnitTests
