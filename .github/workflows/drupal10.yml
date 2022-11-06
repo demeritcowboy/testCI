@@ -96,4 +96,4 @@ jobs:
           sed -i -e 's#dbUser:dbPass@dbHost/dbName#root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db#' ~/.cv.json
           export CIVICRM_UF=UnitTests
           cd vendor/civicrm/civicrm-core
-          ../../bin/phpunit -filter '^(CRM_Activity|CRM_Case|CRM_Contribution)' tests/phpunit/CRM
+          ../../bin/phpunit --filter '^(CRM_Activity|CRM_Case|CRM_Contribution)' tests/phpunit/CRM
