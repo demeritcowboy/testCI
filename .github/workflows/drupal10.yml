@@ -59,6 +59,11 @@ jobs:
           composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
           composer require drush/drush
           composer require --update-with-dependencies composer/installers:'^1.0' civicrm/civicrm-core:$CIVIVER civicrm/civicrm-packages:dev-master civicrm/civicrm-drupal-8:dev-master civicrm/civicrm-asset-plugin:'~1.1'
+      - name: Avoid symlink issues
+        run: |
+          cd /home/runner/drupal10/vendor/civicrm
+          rm -f civicrm-core composer-compile-lib
+          mv /home/runner/drupal10staging/civicrm-core /home/runner/drupal10staging/composer-compile-lib .
       - name: Download cv          
         run: |
           cd $GITHUB_WORKSPACE
@@ -92,4 +97,3 @@ jobs:
           sed -i -e 's#dbUser:dbPass@dbHost/dbName#root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db#' ~/.cv.json
           export CIVICRM_UF=UnitTests
           ./vendor/bin/phpunit tests/phpunit/CRM/Case/BAO/CaseTest.php
-
