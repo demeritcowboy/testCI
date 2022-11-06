@@ -57,7 +57,7 @@ jobs:
           composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-downloads-plugin true
           composer config --no-interaction --no-plugins allow-plugins.civicrm/civicrm-asset-plugin true
           composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
-          composer require drush/drush
+          composer require drush/drush phpunit/phpunit:'^8.5'
           composer require --update-with-dependencies composer/installers:'^1.0' civicrm/civicrm-core:$CIVIVER civicrm/civicrm-packages:dev-master civicrm/civicrm-drupal-8:dev-master civicrm/civicrm-asset-plugin:'~1.1'
       - name: Avoid symlink issues
         run: |
