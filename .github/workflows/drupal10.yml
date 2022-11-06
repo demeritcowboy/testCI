@@ -87,7 +87,9 @@ jobs:
         run: |
           export PATH=$PATH:$GITHUB_WORKSPACE/civicrm-cv/bin
           cd /home/runner/drupal10
+          cat vendor/composer/include_paths.php
           cv vars:fill
           sed -i -e 's#dbUser:dbPass@dbHost/dbName#root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db#' ~/.cv.json
-          ./vendor/bin/phpunit tests/phpunit/CRM/Case/BAO/CaseTest.php
           export CIVICRM_UF=UnitTests
+          ./vendor/bin/phpunit tests/phpunit/CRM/Case/BAO/CaseTest.php
+
