@@ -33,7 +33,7 @@ jobs:
       - name: do it
         run: |
           CIVIVER=5.57.alpha1
-          ROOTDIR=~
+          ROOTDIR=/home/runner
           mkdir -p drupal10staging
           cd drupal10staging
           git clone --depth 1 https://github.com/civicrm/civicrm-core.git
