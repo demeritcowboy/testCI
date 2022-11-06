@@ -57,7 +57,7 @@ jobs:
           composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-downloads-plugin true
           composer config --no-interaction --no-plugins allow-plugins.civicrm/civicrm-asset-plugin true
           composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
-          composer require drush/drush phpunit/phpunit:'^8.5'
+          composer require drush/drush
           composer require --update-with-dependencies composer/installers:'^1.0' civicrm/civicrm-core:$CIVIVER civicrm/civicrm-packages:dev-master civicrm/civicrm-drupal-8:dev-master civicrm/civicrm-asset-plugin:'~1.1'
       - name: Avoid symlink issues
         run: |
@@ -96,4 +96,4 @@ jobs:
           sed -i -e 's#dbUser:dbPass@dbHost/dbName#root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db#' ~/.cv.json
           export CIVICRM_UF=UnitTests
           cd vendor/civicrm/civicrm-core
-          ../../bin/phpunit --filter '^(CRM_Activity|CRM_Case|CRM_Contact|CRM_Contribute)' tests/phpunit/CRM
+          ../../bin/phpunit --filter '^(CRM_A|CRM_B|CRM_C)' tests/phpunit/CRM
