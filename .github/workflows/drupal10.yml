@@ -30,6 +30,10 @@ jobs:
             tools: composer:v2
         env:
           COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: turkish support
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install language-pack-tr
       - name: do it
         run: |
           CIVIVER=5.57.alpha1
@@ -107,5 +111,6 @@ jobs:
           cv vars:fill
           sed -i -e 's#dbUser:dbPass@dbHost/dbName#root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db#' ~/.cv.json
           export CIVICRM_UF=UnitTests
+          cv ev '\Civi::settings()->set("mailing_backend", array_merge(\Civi::settings()->get("mailing_backend"), ["outBound_option" => \CRM_Mailing_Config::OUTBOUND_OPTION_MOCK]));'
           cd vendor/civicrm/civicrm-core
           ../../bin/phpunit --filter '^(CRM_A|CRM_B|CRM_C)' tests/phpunit/CRM
