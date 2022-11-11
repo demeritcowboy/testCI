@@ -34,6 +34,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -y install language-pack-tr
+      - name: Install sendmail
+        run: |
+          sudo apt-get install sendmail
       - name: do it
         run: |
           CIVIVER=5.57.alpha1
