@@ -50,7 +50,7 @@ jobs:
           php -r 'file_put_contents("composer.json", str_replace('"'"'"symfony/filesystem": "~2.8'"'"', '"'"'"symfony/filesystem": "~2.8 || ~6.0'"'"', file_get_contents("composer.json")));'
           cd ../..
           export COMPOSER_MEMORY_LIMIT=-1
-          composer create-project drupal/recommended-project:10.0.x-dev drupal10 --no-interaction
+          composer create-project drupal/recommended-project:'~9.4.0' drupal10 --no-interaction
           cd drupal10
           php -r 'file_put_contents("composer.json", str_replace('"'"'"type": "composer",'"'"', '"'"'"type": "path", "url": "'"$ROOTDIR"'/drupal10staging/civicrm-core", "options": {"versions": {"civicrm/civicrm-core": "'"$CIVIVER"'"}}},{"type": "path","url": "'"$ROOTDIR"'/drupal10staging/composer-compile-lib","options": {"versions": {"civicrm/composer-compile-lib": "v0.6"}}},{"type": "composer",'"'"', file_get_contents("composer.json")));'
           composer config extra.enable-patching true
@@ -61,7 +61,7 @@ jobs:
           composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
           composer require drush/drush
           composer require --update-with-dependencies composer/installers:'^1.0' civicrm/civicrm-core:$CIVIVER civicrm/civicrm-packages:dev-master civicrm/civicrm-drupal-8:dev-master civicrm/civicrm-asset-plugin:'~1.1'
-          composer require --dev cache/integration-tests:'~0.17.0'
+          composer require --update-with-dependencies --dev cache/integration-tests:'~0.17.0'
       - name: phpunit9 stuff
         run: |
           cd /home/runner/drupal10
