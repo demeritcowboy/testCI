@@ -1,0 +1,122 @@
+name: Drupal 10 install with cachetest
+on:  
+  workflow_dispatch:
+    branches:
+      - main
+jobs:
+  installdrupal10:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true     
+    name: Drupal 10
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: db
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+            php-version: 8.1
+            extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
+            coverage: none
+            tools: composer:v2
+        env:
+          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: turkish support
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install language-pack-tr
+      - name: Install sendmail
+        run: |
+          sudo apt-get install sendmail
+      - name: do it
+        run: |
+          CIVIVER=5.57.alpha1
+          ROOTDIR=/home/runner
+          cd $ROOTDIR
+          mkdir -p drupal10staging
+          cd drupal10staging
+          git clone --depth 1 https://github.com/civicrm/civicrm-core.git
+          git clone --depth 1 https://github.com/civicrm/composer-compile-lib.git
+          cd civicrm-core
+          curl -L -O https://gist.githubusercontent.com/demeritcowboy/302a9b868f3a1a5d04925068ae487053/raw/ca7cd483297fea05931512102a78fde7ee4431c5/drupal10civicrmcore.diff
+          git apply drupal10civicrmcore.diff
+          cd ../composer-compile-lib
+          php -r 'file_put_contents("composer.json", str_replace('"'"'"symfony/filesystem": "~2.8'"'"', '"'"'"symfony/filesystem": "~2.8 || ~6.0'"'"', file_get_contents("composer.json")));'
+          cd ../..
+          export COMPOSER_MEMORY_LIMIT=-1
+          composer create-project drupal/recommended-project:10.0.x-dev drupal10 --no-interaction
+          cd drupal10
+          php -r 'file_put_contents("composer.json", str_replace('"'"'"type": "composer",'"'"', '"'"'"type": "path", "url": "'"$ROOTDIR"'/drupal10staging/civicrm-core", "options": {"versions": {"civicrm/civicrm-core": "'"$CIVIVER"'"}}},{"type": "path","url": "'"$ROOTDIR"'/drupal10staging/composer-compile-lib","options": {"versions": {"civicrm/composer-compile-lib": "v0.6"}}},{"type": "composer",'"'"', file_get_contents("composer.json")));'
+          composer config extra.enable-patching true
+          composer config extra.compile-mode all
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-compile-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-downloads-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/civicrm-asset-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
+          composer require drush/drush
+          composer require --update-with-dependencies composer/installers:'^1.0' civicrm/civicrm-core:$CIVIVER civicrm/civicrm-packages:dev-master civicrm/civicrm-drupal-8:dev-master civicrm/civicrm-asset-plugin:'~1.1'
+          composer require --dev cache/integration-tests:'~0.17.0'
+      - name: phpunit9 stuff
+        run: |
+          cd /home/runner/drupal10
+          composer require yoast/phpunit-polyfills
+          cd /home/runner/drupal10staging/civicrm-core
+          curl -L -o phpunit9.diff https://github.com/civicrm/civicrm-core/compare/master...demeritcowboy:civicrm-core:phpunit9.diff
+          git apply phpunit9.diff
+      - name: Avoid symlink issues
+        run: |
+          cd /home/runner/drupal10/vendor/civicrm
+          rm -f civicrm-core composer-compile-lib
+          mv /home/runner/drupal10staging/civicrm-core /home/runner/drupal10staging/composer-compile-lib .      
+      - name: Install translations
+        # some unit tests fail without it
+        run: |
+          mkdir $GITHUB_WORKSPACE/translations
+          cd $GITHUB_WORKSPACE/translations          
+          curl -L -o translations.tgz https://download.civicrm.org/latest/civicrm-NIGHTLY-l10n.tar.gz
+          tar xzf translations.tgz
+          cd /home/runner/drupal10/vendor/civicrm/civicrm-core
+          cp -a $GITHUB_WORKSPACE/translations/civicrm/l10n .
+          cp -a $GITHUB_WORKSPACE/translations/civicrm/sql .
+          ls -al l10n
+          ls -al sql
+      - name: Download cv          
+        run: |
+          cd $GITHUB_WORKSPACE
+          git clone https://github.com/civicrm/cv.git civicrm-cv
+          cd civicrm-cv
+          # downloads-plugin is locked at 2.1 but that doesn't work with composer v2
+          rm composer.lock
+          composer config --no-interaction --no-plugins allow-plugins.composer/installers true
+          composer config --no-interaction --no-plugins allow-plugins.drupal/core-composer-scaffold true
+          composer config --no-interaction --no-plugins allow-plugins.drupal/core-project-message true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-compile-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-downloads-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/civicrm-asset-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
+          COMPOSER_MEMORY_LIMIT=-1 composer install
+      - name: Install Drupal
+        run: |
+          cd /home/runner/drupal10
+          ./vendor/drush/drush/drush -y -l http://civi.localhost site-install standard --db-url='mysql://root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db' --site-name=TestCivi --account-pass=admin
+          chmod +w web/sites/default
+      - name: Install CiviCRM
+        run: |
+          cd /home/runner/drupal10
+          $GITHUB_WORKSPACE/civicrm-cv/bin/cv core:install --cms-base-url=http://civi.localhost -m loadGenerated=1      
+      - name: Run PHPUnit
+        run: |
+          export PATH=$PATH:$GITHUB_WORKSPACE/civicrm-cv/bin
+          cd /home/runner/drupal10
+          cv vars:fill
+          sed -i -e 's#dbUser:dbPass@dbHost/dbName#root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db#' ~/.cv.json
+          export CIVICRM_UF=UnitTests
+          cv ev '\Civi::settings()->set("mailing_backend", array_merge(\Civi::settings()->get("mailing_backend"), ["outBound_option" => \CRM_Mailing_Config::OUTBOUND_OPTION_MOCK]));'
+          cd vendor/civicrm/civicrm-core
+          ../../bin/phpunit tests/phpunit/E2E/Cache
