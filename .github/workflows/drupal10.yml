@@ -112,6 +112,8 @@ jobs:
         run: |
           cd /home/runner/drupal10
           $GITHUB_WORKSPACE/civicrm-cv/bin/cv core:install --cms-base-url=http://civi.localhost -m loadGenerated=1      
+          cd web/sites/default
+          echo 'define("CIVICRM_MAIL_LOG", "/home/runner/drupal10/web/sites/default/files/civicrm/ConfigAndLog/mail.log");' >> civicrm.settings.php
       - name: Run PHPUnit
         run: |
           export PATH=$PATH:$GITHUB_WORKSPACE/civicrm-cv/bin
@@ -122,7 +124,4 @@ jobs:
           cv ev '\Civi::settings()->set("mailing_backend", array_merge(\Civi::settings()->get("mailing_backend"), ["outBound_option" => \CRM_Mailing_Config::OUTBOUND_OPTION_MOCK]));'
           cd vendor/civicrm/civicrm-core
           # TODO make a smarter regex - the goal is all the C's but exclude CRM_Core_Payment ones
-          #../../bin/phpunit --filter '^(CRM_A|CRM_B|CRM_Contact|CRM_Case|CRM_Contribute|CRM_Core_[A-OQ-Z]|CRM_D|CRM_E)' tests/phpunit/CRM
-          php -r '$matches = array(); $x = preg_match('"'"'/something[\S\s]*(union)[\S\s]*something/i'"'"', "blah something blah\n    UNION blah something blah", $matches, PREG_OFFSET_CAPTURE); var_dump($x);'
-          php -r '$matches = array(); $x = preg_match('"'"'/something[\S\s]*(union)[\S\s]*something/i'"'"', "blah something blah    UNION blah something blah", $matches, PREG_OFFSET_CAPTURE); var_dump($x);'
-          ../../bin/phpunit --filter testCustomRuleCustomFields tests/phpunit/CRM/Dedupe/DedupeFinderTest.php
+          ../../bin/phpunit --filter '^(CRM_A|CRM_B|CRM_Contact|CRM_Case|CRM_Contribute|CRM_Core_[A-OQ-Z]|CRM_D|CRM_E)' tests/phpunit/CRM          
