@@ -39,7 +39,7 @@ jobs:
           sudo apt-get install sendmail
       - name: do it
         run: |
-          CIVIVER=5.57.alpha1
+          CIVIVER=5.58.alpha1
           ROOTDIR=/home/runner
           cd $ROOTDIR
           mkdir -p drupal10staging
@@ -114,6 +114,7 @@ jobs:
           $GITHUB_WORKSPACE/civicrm-cv/bin/cv core:install --cms-base-url=http://civi.localhost -m loadGenerated=1      
           cd web/sites/default
           echo 'define("CIVICRM_MAIL_LOG", "/home/runner/drupal10/web/sites/default/files/civicrm/ConfigAndLog/mail.log");' >> civicrm.settings.php
+          tail civicrm.settings.php
       - name: Run PHPUnit
         run: |
           export PATH=$PATH:$GITHUB_WORKSPACE/civicrm-cv/bin
