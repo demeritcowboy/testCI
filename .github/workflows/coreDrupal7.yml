@@ -106,4 +106,4 @@ jobs:
           cv ev '\Civi::settings()->set("mailing_backend", array_merge(\Civi::settings()->get("mailing_backend"), ["outBound_option" => \CRM_Mailing_Config::OUTBOUND_OPTION_MOCK]));'
           cd sites/all/modules/civicrm
           vendor/bin/phpunit --filter testIsDirWithOpenBasedir tests/phpunit/CRM/Utils/FileTest.php
-          tail -30 /home/runner/drupal/sites/default/files/civicrm/ConfigAndLog/mail.log
+          # tail -30 /home/runner/drupal/sites/default/files/civicrm/ConfigAndLog/mail.log
