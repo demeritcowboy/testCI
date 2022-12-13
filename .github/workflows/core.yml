@@ -61,7 +61,7 @@ jobs:
           cd $GITHUB_WORKSPACE/translations          
           curl -L -o translations.tgz https://download.civicrm.org/latest/civicrm-NIGHTLY-l10n.tar.gz
           tar xzf translations.tgz
-          cd drupal/vendor/civicrm/civicrm-core
+          cd ~/drupal/vendor/civicrm/civicrm-core
           cp -a $GITHUB_WORKSPACE/translations/civicrm/l10n .
           cp -a $GITHUB_WORKSPACE/translations/civicrm/sql .
           ls -al l10n
