@@ -37,6 +37,7 @@ jobs:
       - name: do it
         run: |
           export COMPOSER_MEMORY_LIMIT=-1
+          cd ~
           composer create-project drupal/recommended-project:'^9' drupal --no-interaction
           cd drupal
           composer config extra.enable-patching true
@@ -49,7 +50,7 @@ jobs:
           composer require -W drush/drush
       - name: phpunit9 stuff
         run: |
-          cd drupal
+          cd ~/drupal
           composer require -W yoast/phpunit-polyfills
           cd vendor/civicrm/civicrm-core
           curl -L -o phpunit9.diff https://github.com/civicrm/civicrm-core/compare/master...demeritcowboy:civicrm-core:phpunit9.diff
@@ -83,17 +84,17 @@ jobs:
           COMPOSER_MEMORY_LIMIT=-1 composer install
       - name: Apply core PR
         run: |
-          cd drupal/vendor/civicrm/civicrm-core
+          cd ~/drupal/vendor/civicrm/civicrm-core
           curl -L -O https://github.com/civicrm/civicrm-core/pull/25160.patch
           git apply 25160.patch
       - name: Install Drupal
         run: |
-          cd drupal
+          cd ~/drupal
           ./vendor/drush/drush/drush -y -l http://civi.localhost site-install standard --db-url='mysql://root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db' --site-name=TestCivi --account-pass=admin
           chmod +w web/sites/default
       - name: Install CiviCRM
         run: |
-          cd drupal
+          cd ~/drupal
           $GITHUB_WORKSPACE/civicrm-cv/bin/cv core:install --cms-base-url=http://civi.localhost -m loadGenerated=1      
           cd web/sites/default
           echo 'define("CIVICRM_MAIL_LOG", "/home/runner/drupal/web/sites/default/files/civicrm/ConfigAndLog/mail.log");' >> civicrm.settings.php
@@ -101,7 +102,7 @@ jobs:
       - name: Run PHPUnit
         run: |
           export PATH=$PATH:$GITHUB_WORKSPACE/civicrm-cv/bin
-          cd drupal
+          cd ~/drupal
           cv vars:fill
           sed -i -e 's#dbUser:dbPass@dbHost/dbName#root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db#' ~/.cv.json
           export CIVICRM_UF=UnitTests
