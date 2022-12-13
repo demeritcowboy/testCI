@@ -44,7 +44,7 @@ jobs:
           mv drupal-$DRUPVER drupal
           cd drupal
           composer require drush/drush:'^8'
-          ./vendor/drush/drush/drush -y -l http://civi.localhost site-install standard --db-url='mysql://root:passpasspw@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db' --site-name=TestCivi --account-pass=admin
+          ./vendor/drush/drush/drush -y -l http://civi.localhost site-install standard --db-url='mysql://root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db' --site-name=TestCivi --account-pass=admin
           chmod +w sites/default
           cd sites/all/modules
           git clone --depth 1 https://github.com/civicrm/civicrm-core.git civicrm
@@ -89,11 +89,6 @@ jobs:
           cd ~/drupal/vendor/civicrm/civicrm-core
           # curl -L -O https://github.com/civicrm/civicrm-core/pull/25160.patch
           # git apply 25160.patch
-      - name: Install Drupal
-        run: |
-          cd ~/drupal
-          ./vendor/drush/drush/drush -y -l http://civi.localhost site-install standard --db-url='mysql://root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db' --site-name=TestCivi --account-pass=admin
-          chmod +w web/sites/default
       - name: Install CiviCRM
         run: |
           cd ~/drupal
