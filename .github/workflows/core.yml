@@ -1,0 +1,111 @@
+name: Core tests
+on:  
+  workflow_dispatch:
+    branches:
+      - main
+jobs:
+  installcore:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true     
+    name: Core
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: db
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+            php-version: 8.1
+            extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
+            coverage: none
+            tools: composer:v2
+        env:
+          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: turkish support
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install language-pack-tr
+      - name: Install sendmail
+        run: |
+          sudo apt-get install sendmail
+      - name: do it
+        run: |
+          export COMPOSER_MEMORY_LIMIT=-1
+          composer create-project drupal/recommended-project:'^9' drupal --no-interaction
+          cd drupal
+          composer config extra.enable-patching true
+          composer config extra.compile-mode all
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-compile-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-downloads-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/civicrm-asset-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
+          composer require drush/drush
+          composer require --update-with-dependencies composer/installers:'^1.0' civicrm/civicrm-core:dev-master civicrm/civicrm-packages:dev-master civicrm/civicrm-drupal-8:dev-master civicrm/civicrm-asset-plugin:'~1.1'
+      - name: phpunit9 stuff
+        run: |
+          cd drupal
+          composer require yoast/phpunit-polyfills
+          cd vendor/civicrm/civicrm-core
+          curl -L -o phpunit9.diff https://github.com/civicrm/civicrm-core/compare/master...demeritcowboy:civicrm-core:phpunit9.diff
+          git apply phpunit9.diff      
+      - name: Install translations
+        # some unit tests fail without it
+        run: |
+          mkdir $GITHUB_WORKSPACE/translations
+          cd $GITHUB_WORKSPACE/translations          
+          curl -L -o translations.tgz https://download.civicrm.org/latest/civicrm-NIGHTLY-l10n.tar.gz
+          tar xzf translations.tgz
+          cd drupal/vendor/civicrm/civicrm-core
+          cp -a $GITHUB_WORKSPACE/translations/civicrm/l10n .
+          cp -a $GITHUB_WORKSPACE/translations/civicrm/sql .
+          ls -al l10n
+          ls -al sql
+      - name: Download cv          
+        run: |
+          cd $GITHUB_WORKSPACE
+          git clone https://github.com/civicrm/cv.git civicrm-cv
+          cd civicrm-cv
+          # downloads-plugin is locked at 2.1 but that doesn't work with composer v2
+          rm composer.lock
+          composer config --no-interaction --no-plugins allow-plugins.composer/installers true
+          composer config --no-interaction --no-plugins allow-plugins.drupal/core-composer-scaffold true
+          composer config --no-interaction --no-plugins allow-plugins.drupal/core-project-message true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-compile-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-downloads-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/civicrm-asset-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
+          COMPOSER_MEMORY_LIMIT=-1 composer install
+      - name: Apply core PR
+        run: |
+          cd drupal/vendor/civicrm/civicrm-core
+          curl -L -O https://github.com/civicrm/civicrm-core/pull/25160.patch
+          git apply 25160.patch
+      - name: Install Drupal
+        run: |
+          cd drupal
+          ./vendor/drush/drush/drush -y -l http://civi.localhost site-install standard --db-url='mysql://root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db' --site-name=TestCivi --account-pass=admin
+          chmod +w web/sites/default
+      - name: Install CiviCRM
+        run: |
+          cd drupal
+          $GITHUB_WORKSPACE/civicrm-cv/bin/cv core:install --cms-base-url=http://civi.localhost -m loadGenerated=1      
+          cd web/sites/default
+          echo 'define("CIVICRM_MAIL_LOG", "/home/runner/drupal/web/sites/default/files/civicrm/ConfigAndLog/mail.log");' >> civicrm.settings.php
+          tail civicrm.settings.php
+      - name: Run PHPUnit
+        run: |
+          export PATH=$PATH:$GITHUB_WORKSPACE/civicrm-cv/bin
+          cd drupal
+          cv vars:fill
+          sed -i -e 's#dbUser:dbPass@dbHost/dbName#root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db#' ~/.cv.json
+          export CIVICRM_UF=UnitTests
+          cv ev '\Civi::settings()->set("mailing_backend", array_merge(\Civi::settings()->get("mailing_backend"), ["outBound_option" => \CRM_Mailing_Config::OUTBOUND_OPTION_MOCK]));'
+          cd vendor/civicrm/civicrm-core
+          ../../bin/phpunit --filter testIsDirWithOpenBasedir tests/phpunit/CRM/Utils/FileTest.php
+          tail -30 /home/runner/drupal/web/sites/default/files/civicrm/ConfigAndLog/mail.log
