@@ -45,12 +45,12 @@ jobs:
           composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-downloads-plugin true
           composer config --no-interaction --no-plugins allow-plugins.civicrm/civicrm-asset-plugin true
           composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
-          composer require drush/drush
           composer require -W composer/installers:'^1.0' civicrm/civicrm-core:dev-master civicrm/civicrm-packages:dev-master civicrm/civicrm-drupal-8:dev-master civicrm/civicrm-asset-plugin:'~1.1'
+          composer require -W drush/drush
       - name: phpunit9 stuff
         run: |
           cd drupal
-          composer require yoast/phpunit-polyfills
+          composer require -W yoast/phpunit-polyfills
           cd vendor/civicrm/civicrm-core
           curl -L -o phpunit9.diff https://github.com/civicrm/civicrm-core/compare/master...demeritcowboy:civicrm-core:phpunit9.diff
           git apply phpunit9.diff      
