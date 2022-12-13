@@ -85,8 +85,8 @@ jobs:
       - name: Apply core PR
         run: |
           cd ~/drupal/vendor/civicrm/civicrm-core
-          curl -L -O https://github.com/civicrm/civicrm-core/pull/25160.patch
-          git apply 25160.patch
+          # curl -L -O https://github.com/civicrm/civicrm-core/pull/25160.patch
+          # git apply 25160.patch
       - name: Install Drupal
         run: |
           cd ~/drupal
