@@ -45,17 +45,14 @@ jobs:
           mkdir -p drupal10staging
           cd drupal10staging
           git clone --depth 1 https://github.com/civicrm/civicrm-core.git
-          git clone --depth 1 https://github.com/civicrm/composer-compile-lib.git
           cd civicrm-core
           curl -L -O https://gist.githubusercontent.com/demeritcowboy/302a9b868f3a1a5d04925068ae487053/raw/ed23eabd5118fe89b9d2c99181d757f9f95fb8f9/drupal10civicrmcore.diff
           git apply drupal10civicrmcore.diff
-          cd ../composer-compile-lib
-          php -r 'file_put_contents("composer.json", str_replace('"'"'"symfony/filesystem": "~2.8'"'"', '"'"'"symfony/filesystem": "~2.8 || ~6.0'"'"', file_get_contents("composer.json")));'
           cd ../..
           export COMPOSER_MEMORY_LIMIT=-1
           composer create-project drupal/recommended-project:10.0.x-dev drupal10 --no-interaction
           cd drupal10
-          php -r 'file_put_contents("composer.json", str_replace('"'"'"type": "composer",'"'"', '"'"'"type": "path", "url": "'"$ROOTDIR"'/drupal10staging/civicrm-core", "options": {"versions": {"civicrm/civicrm-core": "'"$CIVIVER"'"}}},{"type": "path","url": "'"$ROOTDIR"'/drupal10staging/composer-compile-lib","options": {"versions": {"civicrm/composer-compile-lib": "v0.6"}}},{"type": "composer",'"'"', file_get_contents("composer.json")));'
+          php -r 'file_put_contents("composer.json", str_replace('"'"'"type": "composer",'"'"', '"'"'"type": "path", "url": "'"$ROOTDIR"'/drupal10staging/civicrm-core", "options": {"versions": {"civicrm/civicrm-core": "'"$CIVIVER"'"}}},{"type": "composer",'"'"', file_get_contents("composer.json")));'
           composer config extra.enable-patching true
           composer config extra.compile-mode all
           composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-compile-plugin true
@@ -74,8 +71,8 @@ jobs:
       - name: Avoid symlink issues
         run: |
           cd /home/runner/drupal10/vendor/civicrm
-          rm -f civicrm-core composer-compile-lib
-          mv /home/runner/drupal10staging/civicrm-core /home/runner/drupal10staging/composer-compile-lib .      
+          rm -f civicrm-core
+          mv /home/runner/drupal10staging/civicrm-core .      
       - name: Install translations
         # some unit tests fail without it
         run: |
