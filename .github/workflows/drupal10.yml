@@ -123,7 +123,7 @@ jobs:
           cd vendor/civicrm/civicrm-core
           # TODO make a smarter regex - the goal is all the C's but exclude CRM_Core_Payment ones
           #../../bin/phpunit --filter '^(CRM_A|CRM_B|CRM_Contact|CRM_Case|CRM_Contribute|CRM_Core_[A-OQ-Z]|CRM_D|CRM_E)' tests/phpunit/CRM
-          php -r '$c = file_get_contents("tests/phpunit/CRM/Core/I18n/LocaleTest.php"); file_put_contents("tests/phpunit/CRM/Core/I18n/LocaleTest.php", str_replace("LC_ALL, \'en_US\'", "LC_ALL, \'en_US.utf8\'", $c));'
+          sed -i -e '150,150s/en_US/en_US.utf8' tests/phpunit/CRM/Core/I18n/LocaleTest.php
           tail tests/phpunit/CRM/Core/I18n/LocaleTest.php
           ../../bin/phpunit --filter '^(CRM_Core_I18n_LocaleTest::testInsertTurkish|CRM_Core_ResourcesTest)' tests/phpunit/CRM
           # tail -30 /home/runner/drupal10/web/sites/default/files/civicrm/ConfigAndLog/mail.log
