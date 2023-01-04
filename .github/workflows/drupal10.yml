@@ -124,5 +124,5 @@ jobs:
           sed -i -e '150,150s/en_US/en_US.utf8/' tests/phpunit/CRM/Core/I18n/LocaleTest.php
           tail tests/phpunit/CRM/Core/I18n/LocaleTest.php
           # TODO make a smarter regex - the goal is all the C's but exclude CRM_Core_Payment ones
-          ../../bin/phpunit --filter '^(CRM_A|CRM_B|CRM_Campaign|CRM_Case|CRM_Contact|CRM_Contribute|CRM_Core_[A-OQ-Z]|CRM_Custom|CRM_D|CRM_[E-L])' tests/phpunit/CRM          
+          ../../bin/phpunit --filter '^(CRM_A|CRM_B|CRM_Campaign|CRM_Case|CRM_Contact|CRM_Contribute|CRM_Core_[A-OQ-Z]|CRM_Custom|CRM_D|CRM_[E-R])' tests/phpunit/CRM          
           # tail -30 /home/runner/drupal10/web/sites/default/files/civicrm/ConfigAndLog/mail.log
