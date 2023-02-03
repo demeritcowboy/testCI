@@ -39,20 +39,20 @@ jobs:
           sudo apt-get install sendmail
       - name: do it
         run: |
-          CIVIVER=5.59.alpha1
+          CIVIVER=dev-master
           ROOTDIR=/home/runner
           cd $ROOTDIR
-          mkdir -p drupal10staging
-          cd drupal10staging
-          git clone --depth 1 https://github.com/civicrm/civicrm-core.git
-          cd civicrm-core
-          curl -L -O https://gist.githubusercontent.com/demeritcowboy/302a9b868f3a1a5d04925068ae487053/raw/ed23eabd5118fe89b9d2c99181d757f9f95fb8f9/drupal10civicrmcore.diff
-          git apply drupal10civicrmcore.diff
-          cd ../..
+          #mkdir -p drupal10staging
+          #cd drupal10staging
+          #git clone --depth 1 https://github.com/civicrm/civicrm-core.git
+          #cd civicrm-core
+          #curl -L -O https://gist.githubusercontent.com/demeritcowboy/302a9b868f3a1a5d04925068ae487053/raw/ed23eabd5118fe89b9d2c99181d757f9f95fb8f9/drupal10civicrmcore.diff
+          #git apply drupal10civicrmcore.diff
+          #cd ../..
           export COMPOSER_MEMORY_LIMIT=-1
           composer create-project drupal/recommended-project:10.0.x-dev drupal10 --no-interaction
           cd drupal10
-          php -r 'file_put_contents("composer.json", str_replace('"'"'"type": "composer",'"'"', '"'"'"type": "path", "url": "'"$ROOTDIR"'/drupal10staging/civicrm-core", "options": {"versions": {"civicrm/civicrm-core": "'"$CIVIVER"'"}}},{"type": "composer",'"'"', file_get_contents("composer.json")));'
+          #php -r 'file_put_contents("composer.json", str_replace('"'"'"type": "composer",'"'"', '"'"'"type": "path", "url": "'"$ROOTDIR"'/drupal10staging/civicrm-core", "options": {"versions": {"civicrm/civicrm-core": "'"$CIVIVER"'"}}},{"type": "composer",'"'"', file_get_contents("composer.json")));'
           composer config extra.enable-patching true
           composer config extra.compile-mode all
           composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-compile-plugin true
@@ -60,7 +60,7 @@ jobs:
           composer config --no-interaction --no-plugins allow-plugins.civicrm/civicrm-asset-plugin true
           composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
           composer require drush/drush
-          composer require --update-with-dependencies composer/installers:'^1.0' civicrm/civicrm-core:$CIVIVER civicrm/civicrm-packages:dev-master civicrm/civicrm-drupal-8:dev-master civicrm/civicrm-asset-plugin:'~1.1'
+          composer require --update-with-dependencies composer/installers:'^1.0' civicrm/civicrm-{core,packages,drupal-8}:$CIVIVER civicrm/civicrm-asset-plugin:'~1.1'
       - name: phpunit9 stuff
         run: |
           cd /home/runner/drupal10
