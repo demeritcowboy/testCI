@@ -65,14 +65,14 @@ jobs:
         run: |
           cd /home/runner/drupal10
           composer require yoast/phpunit-polyfills
-          cd /home/runner/drupal10staging/civicrm-core
+          cd vendor/civicrm/civicrm-core
           curl -L -o phpunit9.diff https://github.com/civicrm/civicrm-core/compare/master...demeritcowboy:civicrm-core:phpunit9.diff
           git apply phpunit9.diff
-      - name: Avoid symlink issues
-        run: |
-          cd /home/runner/drupal10/vendor/civicrm
-          rm -f civicrm-core
-          mv /home/runner/drupal10staging/civicrm-core .      
+      # - name: Avoid symlink issues
+        # run: |
+          #cd /home/runner/drupal10/vendor/civicrm
+          #rm -f civicrm-core
+          #mv /home/runner/drupal10staging/civicrm-core .      
       - name: Install translations
         # some unit tests fail without it
         run: |
