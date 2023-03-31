@@ -68,6 +68,8 @@ jobs:
           cd vendor/civicrm/civicrm-core
           curl -L -o phpunit9.diff https://github.com/civicrm/civicrm-core/compare/master...demeritcowboy:civicrm-core:phpunit9.diff
           git apply phpunit9.diff
+          curl -L -o tap.diff https://github.com/civicrm/civicrm-core/pull/25956.diff
+          git apply tap.diff
       # - name: Avoid symlink issues
         # run: |
           #cd /home/runner/drupal10/vendor/civicrm
