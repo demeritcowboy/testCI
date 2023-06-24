@@ -2458,6 +2458,9 @@ index c08cc73d5d823c6f740b2cb5f0d00caf0d336ebf..8f9d90c757f8ec4c74cdd2e1819db743
 +    // creates a contribution; then invoice.payment_succeeded/paid following, which would
 +    // find it.
 +    $contribution = $this->findContribution($chargeID, $invoiceID, $subscriptionID);
++    if (!empty($contribution) && empty($contribution['id'])) {
++      throw new \Exception(print_r($contribution, true));
++    }
 +    if (empty($contribution)) {
 +      // We were unable to locate the Contribution; it could be the next one in a subscription.
 +      if (empty($contributionRecur['id'])) {
@@ -2476,6 +2479,9 @@ index c08cc73d5d823c6f740b2cb5f0d00caf0d336ebf..8f9d90c757f8ec4c74cdd2e1819db743
 +          ->addWhere('id', '=', $contributionID)
 +          ->execute()
 +          ->first();
++        if ($contribution === NULL) {
++          throw new \Exception(var_export($contributionID, true));
++        }
 +      }
 +    }
 +    // Release the lock to find/create contribution
