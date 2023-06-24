@@ -2241,7 +2241,7 @@ index c08cc73d5d823c6f740b2cb5f0d00caf0d336ebf..8f9d90c757f8ec4c74cdd2e1819db743
            return $return;
          }
          if ($payment['trxn_id'] === $chargeID) {
-@@ -227,13 +423,471 @@ class Events {
+@@ -227,19 +423,477 @@ class Events {
        'total_amount' => $refundParams['total_amount'],
      ]);
      if (!empty($refundPayment['count'])) {
