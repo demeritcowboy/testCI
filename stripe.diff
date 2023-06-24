@@ -1,5 +1,5 @@
 diff --git a/CRM/Core/Payment/Stripe.php b/CRM/Core/Payment/Stripe.php
-index 555c70c4d64b188c1e916dbb9f2d8593a6424cf4..df6d141f3f1a0cd9b831617ec275feeba844afc8 100644
+index 555c70c..df6d141 100644
 --- a/CRM/Core/Payment/Stripe.php
 +++ b/CRM/Core/Payment/Stripe.php
 @@ -9,6 +9,7 @@
@@ -543,7 +543,7 @@ index 555c70c4d64b188c1e916dbb9f2d8593a6424cf4..df6d141f3f1a0cd9b831617ec275feeb
  }
 diff --git a/CRM/Core/Payment/StripeCheckout.php b/CRM/Core/Payment/StripeCheckout.php
 new file mode 100644
-index 0000000000000000000000000000000000000000..9c1fd5c8c28984f51828d592a2e83b5bff207ab0
+index 0000000..9c1fd5c
 --- /dev/null
 +++ b/CRM/Core/Payment/StripeCheckout.php
 @@ -0,0 +1,302 @@
@@ -850,7 +850,7 @@ index 0000000000000000000000000000000000000000..9c1fd5c8c28984f51828d592a2e83b5b
 +
 +}
 diff --git a/CRM/Core/Payment/StripeIPN.php b/CRM/Core/Payment/StripeIPN.php
-index 5e1a55a8e41ccd4829fd17de4c17ce40083b0c9b..41417c3335ee0f13ff6cf526783e39bd07b2550b 100644
+index 5e1a55a..41417c3 100644
 --- a/CRM/Core/Payment/StripeIPN.php
 +++ b/CRM/Core/Payment/StripeIPN.php
 @@ -52,6 +52,11 @@ class CRM_Core_Payment_StripeIPN {
@@ -944,7 +944,7 @@ index 5e1a55a8e41ccd4829fd17de4c17ce40083b0c9b..41417c3335ee0f13ff6cf526783e39bd
          // Re-throw a modified exception. (Special case for phpunit testing).
          $return->message = get_class($e) . ": " . $e->getMessage();
 -        throw new PaymentProcessorException($return->message, $e->getCode(), $e);
-+        throw new \Exception(print_r($return, true) . print_r($e, true));
++        throw new PaymentProcessorException($return->message, $e->getCode());
        }
        else {
          // Normal use.
@@ -1376,7 +1376,7 @@ index 5e1a55a8e41ccd4829fd17de4c17ce40083b0c9b..41417c3335ee0f13ff6cf526783e39bd
 -
  }
 diff --git a/CRM/Stripe/Api.php b/CRM/Stripe/Api.php
-index 35e16648d93b2108791c18da6071cafebbbf6b85..2924972f6c533eb5babaa7a0d6d2d3c738edac8b 100644
+index 35e1664..2924972 100644
 --- a/CRM/Stripe/Api.php
 +++ b/CRM/Stripe/Api.php
 @@ -9,6 +9,8 @@
@@ -1523,7 +1523,7 @@ index 35e16648d93b2108791c18da6071cafebbbf6b85..2924972f6c533eb5babaa7a0d6d2d3c7
 +
  }
 diff --git a/CRM/Stripe/BAO/StripeCustomer.php b/CRM/Stripe/BAO/StripeCustomer.php
-index 049a26abac541e08ed0f0fd0b1b5cd6516e4d618..a699c7d1c76854db1d20ed80803fd790f78d76db 100644
+index 049a26a..a699c7d 100644
 --- a/CRM/Stripe/BAO/StripeCustomer.php
 +++ b/CRM/Stripe/BAO/StripeCustomer.php
 @@ -90,7 +90,7 @@ class CRM_Stripe_BAO_StripeCustomer extends CRM_Stripe_DAO_StripeCustomer {
@@ -1536,7 +1536,7 @@ index 049a26abac541e08ed0f0fd0b1b5cd6516e4d618..a699c7d1c76854db1d20ed80803fd790
        throw new \Civi\Payment\Exception\PaymentProcessorException('Failed to update Stripe Customer: ' . $err['code']);
      }
 diff --git a/CRM/Stripe/Customer.php b/CRM/Stripe/Customer.php
-index 60055309eb192247275e7bf8d37d39b218bfdb30..223c65f854be94f5ce701b91cb15f53b012d3e74 100644
+index 6005530..223c65f 100644
 --- a/CRM/Stripe/Customer.php
 +++ b/CRM/Stripe/Customer.php
 @@ -83,11 +83,11 @@ class CRM_Stripe_Customer {
@@ -1572,7 +1572,7 @@ index 60055309eb192247275e7bf8d37d39b218bfdb30..223c65f854be94f5ce701b91cb15f53b
      foreach ($requiredParams as $required) {
        if (empty($params[$required])) {
 diff --git a/CRM/Stripe/PaymentIntent.php b/CRM/Stripe/PaymentIntent.php
-index de5d9c9c23323bd296db005815d004005b5149ed..06cf5e235f6f9b85ddd97c79327e88b8030fabd4 100644
+index de5d9c9..06cf5e2 100644
 --- a/CRM/Stripe/PaymentIntent.php
 +++ b/CRM/Stripe/PaymentIntent.php
 @@ -9,6 +9,7 @@
@@ -1610,7 +1610,7 @@ index de5d9c9c23323bd296db005815d004005b5149ed..06cf5e235f6f9b85ddd97c79327e88b8
      elseif (($intent->status === 'requires_capture') || ($intent->status === 'requires_confirmation')) {
        // paymentIntent = requires_capture / requires_confirmation
 diff --git a/CRM/Stripe/Webhook.php b/CRM/Stripe/Webhook.php
-index 036a6938ee6d6501ef3794d9f162cd2b2dbce376..986c2916572bca38703f4422d591d587d5349cf5 100644
+index 036a693..986c291 100644
 --- a/CRM/Stripe/Webhook.php
 +++ b/CRM/Stripe/Webhook.php
 @@ -27,20 +27,21 @@ class CRM_Stripe_Webhook {
@@ -1662,7 +1662,7 @@ index 036a6938ee6d6501ef3794d9f162cd2b2dbce376..986c2916572bca38703f4422d591d587
  
 diff --git a/Civi/Api4/Action/StripeCharge/GetBalanceTransactionDetails.php b/Civi/Api4/Action/StripeCharge/GetBalanceTransactionDetails.php
 new file mode 100644
-index 0000000000000000000000000000000000000000..d2efeeb2cf3f926bf129c7b532e7ccab3cd8b723
+index 0000000..d2efeeb
 --- /dev/null
 +++ b/Civi/Api4/Action/StripeCharge/GetBalanceTransactionDetails.php
 @@ -0,0 +1,63 @@
@@ -1731,7 +1731,7 @@ index 0000000000000000000000000000000000000000..d2efeeb2cf3f926bf129c7b532e7ccab
 +}
 diff --git a/Civi/Api4/StripeCharge.php b/Civi/Api4/StripeCharge.php
 new file mode 100644
-index 0000000000000000000000000000000000000000..df7929b0a59f8dc4a59b8fd5b5733e14f702f60d
+index 0000000..df7929b
 --- /dev/null
 +++ b/Civi/Api4/StripeCharge.php
 @@ -0,0 +1,53 @@
@@ -1790,7 +1790,7 @@ index 0000000000000000000000000000000000000000..df7929b0a59f8dc4a59b8fd5b5733e14
 +}
 diff --git a/Civi/Stripe/Api.php b/Civi/Stripe/Api.php
 new file mode 100644
-index 0000000000000000000000000000000000000000..5202e86ee15076a943ba335e6895f82b10ae6a5e
+index 0000000..5202e86
 --- /dev/null
 +++ b/Civi/Stripe/Api.php
 @@ -0,0 +1,79 @@
@@ -1874,7 +1874,7 @@ index 0000000000000000000000000000000000000000..5202e86ee15076a943ba335e6895f82b
 +
 +}
 diff --git a/Civi/Stripe/Webhook/Events.php b/Civi/Stripe/Webhook/Events.php
-index c08cc73d5d823c6f740b2cb5f0d00caf0d336ebf..8f9d90c757f8ec4c74cdd2e1819db7434aa53f11 100644
+index c08cc73..6bdbba9 100644
 --- a/Civi/Stripe/Webhook/Events.php
 +++ b/Civi/Stripe/Webhook/Events.php
 @@ -11,16 +11,30 @@
@@ -1987,9 +1987,9 @@ index c08cc73d5d823c6f740b2cb5f0d00caf0d336ebf..8f9d90c757f8ec4c74cdd2e1819db743
      }
 -    return $contribution;
 +    return $contribution ?? [];
-   }
- 
-   /**
++  }
++
++  /**
 +   * This allows us to end a subscription once:
 +   *   a) We've reached the end date / number of installments
 +   *   b) The recurring contribution is marked as completed
@@ -2173,9 +2173,9 @@ index c08cc73d5d823c6f740b2cb5f0d00caf0d336ebf..8f9d90c757f8ec4c74cdd2e1819db743
 +    $return->message = __FUNCTION__ . ' contributionID: ' . $contribution['id'];
 +    $return->ok = TRUE;
 +    return $return;
-+  }
-+
-+  /**
+   }
+ 
+   /**
 +   * Webhook event: charge.refunded
     * Process the charge.refunded event from Stripe
     *
@@ -2241,7 +2241,7 @@ index c08cc73d5d823c6f740b2cb5f0d00caf0d336ebf..8f9d90c757f8ec4c74cdd2e1819db743
            return $return;
          }
          if ($payment['trxn_id'] === $chargeID) {
-@@ -227,19 +423,477 @@ class Events {
+@@ -227,13 +423,477 @@ class Events {
        'total_amount' => $refundParams['total_amount'],
      ]);
      if (!empty($refundPayment['count'])) {
@@ -2722,7 +2722,7 @@ index c08cc73d5d823c6f740b2cb5f0d00caf0d336ebf..8f9d90c757f8ec4c74cdd2e1819db743
    }
  
 diff --git a/api/v3/Stripe/Setuptest.php b/api/v3/Stripe/Setuptest.php
-index 8412f8d89e950aa85da6cf7c0cbf31785c12632b..ae662cb4e076a3b4dcf2db1c454e10d0bb30522c 100644
+index 8412f8d..ae662cb 100644
 --- a/api/v3/Stripe/Setuptest.php
 +++ b/api/v3/Stripe/Setuptest.php
 @@ -35,6 +35,8 @@ function _civicrm_api3_stripe_Setuptest_spec(&$spec) {
@@ -2735,7 +2735,7 @@ index 8412f8d89e950aa85da6cf7c0cbf31785c12632b..ae662cb4e076a3b4dcf2db1c454e10d0
  function civicrm_api3_stripe_Setuptest($params) {
    $params = [
 diff --git a/api/v3/StripeCustomer.php b/api/v3/StripeCustomer.php
-index 39b5515214498942db278ba3b00cdb7ba8cf2ba7..6d0782de5533097ba12ce2a8c19af884e3270f24 100644
+index 39b5515..6d0782d 100644
 --- a/api/v3/StripeCustomer.php
 +++ b/api/v3/StripeCustomer.php
 @@ -171,7 +171,7 @@ function civicrm_api3_stripe_customer_updatestripemetadata($params) {
@@ -2748,7 +2748,7 @@ index 39b5515214498942db278ba3b00cdb7ba8cf2ba7..6d0782de5533097ba12ce2a8c19af884
      }
  
 diff --git a/api/v3/StripePaymentintent.php b/api/v3/StripePaymentintent.php
-index 731c768d1347b58c5ea8a3788fc5a26087f05b0b..f691a4eb28871e51a468ac22e5075bc5ad331191 100644
+index 731c768..f691a4e 100644
 --- a/api/v3/StripePaymentintent.php
 +++ b/api/v3/StripePaymentintent.php
 @@ -118,6 +118,9 @@ function _civicrm_api3_stripe_paymentintent_process_spec(&$spec) {
@@ -2774,7 +2774,7 @@ index 731c768d1347b58c5ea8a3788fc5a26087f05b0b..f691a4eb28871e51a468ac22e5075bc5
    //   authentication from the user (eg. on the confirmation page). So we don't need the amount
    //   in this case.
 diff --git a/docs/releasenotes.md b/docs/releasenotes.md
-index 10df0302692d5d17db7a92c59cfe76e7d06e86e4..c9948c5daf4eb378ae11a4193ed531cd735892ce 100644
+index 10df030..c9948c5 100644
 --- a/docs/releasenotes.md
 +++ b/docs/releasenotes.md
 @@ -9,6 +9,33 @@ Releases use the following numbering system:
@@ -2812,7 +2812,7 @@ index 10df0302692d5d17db7a92c59cfe76e7d06e86e4..c9948c5daf4eb378ae11a4193ed531cd
  
  * Fix [#422](https://lab.civicrm.org/extensions/stripe/-/issues/422) The resource ID cannot be null or whitespace.
 diff --git a/info.xml b/info.xml
-index 05a43d49ff9ea99f2d5abc029c4c2ccf0086fec6..c00b99d525f9a6f782ff6e94dd9a498d72ca9909 100644
+index 05a43d4..c00b99d 100644
 --- a/info.xml
 +++ b/info.xml
 @@ -15,9 +15,9 @@
@@ -2838,7 +2838,7 @@ index 05a43d49ff9ea99f2d5abc029c4c2ccf0086fec6..c00b99d525f9a6f782ff6e94dd9a498d
    </mixins>
    <upgrader>CRM_Stripe_Upgrader</upgrader>
 diff --git a/js/civicrmStripe.js b/js/civicrmStripe.js
-index deeafe17da01a1f4598aa8cbd25d2b7d01301150..c12e4c0be3cf1da924247020073c058237fa716b 100644
+index deeafe1..c12e4c0 100644
 --- a/js/civicrmStripe.js
 +++ b/js/civicrmStripe.js
 @@ -399,6 +399,15 @@
@@ -2865,7 +2865,7 @@ diff --git a/stripe.mgd.php b/managed/stripe.mgd.php
 similarity index 65%
 rename from stripe.mgd.php
 rename to managed/stripe.mgd.php
-index 165f3e5c0263b8bf801bfe0a828626be45316ded..a2c282371f45e8413e7653a584c2ffb32a8a454e 100644
+index 165f3e5..a2c2823 100644
 --- a/stripe.mgd.php
 +++ b/managed/stripe.mgd.php
 @@ -42,4 +42,28 @@ return [
@@ -2899,7 +2899,7 @@ index 165f3e5c0263b8bf801bfe0a828626be45316ded..a2c282371f45e8413e7653a584c2ffb3
  ];
 diff --git a/managed/stripecustomdata.mgd.php b/managed/stripecustomdata.mgd.php
 new file mode 100644
-index 0000000000000000000000000000000000000000..16bcc1e98c3fad57d31e164e91c4130b92354a8a
+index 0000000..16bcc1e
 --- /dev/null
 +++ b/managed/stripecustomdata.mgd.php
 @@ -0,0 +1,190 @@
@@ -3097,7 +3097,7 @@ diff --git a/mixin/smarty-v2@1.0.0.mixin.php b/mixin/smarty-v2@1.0.1.mixin.php
 similarity index 79%
 rename from mixin/smarty-v2@1.0.0.mixin.php
 rename to mixin/smarty-v2@1.0.1.mixin.php
-index 0b371057cce7efb4228c109e2c4aea8e34b24151..5972dbdc57ffd6badbb1eb84f628700ea9727b09 100644
+index 0b37105..5972dbd 100644
 --- a/mixin/smarty-v2@1.0.0.mixin.php
 +++ b/mixin/smarty-v2@1.0.1.mixin.php
 @@ -4,7 +4,7 @@
@@ -3128,7 +3128,7 @@ index 0b371057cce7efb4228c109e2c4aea8e34b24151..5972dbdc57ffd6badbb1eb84f628700e
  
    // Let's figure out what environment we're in -- so that we know the best way to call $register().
 diff --git a/settings/stripe.setting.php b/settings/stripe.setting.php
-index ca3a97f3a725d2021cd0f8abb24a0391e334472b..5a2a2946db86feefcbb28cbd843e3e458fde6e13 100644
+index ca3a97f..5a2a294 100644
 --- a/settings/stripe.setting.php
 +++ b/settings/stripe.setting.php
 @@ -12,16 +12,6 @@
@@ -3193,7 +3193,7 @@ index ca3a97f3a725d2021cd0f8abb24a0391e334472b..5a2a2946db86feefcbb28cbd843e3e45
 +  ],
  ];
 diff --git a/stripe.civix.php b/stripe.civix.php
-index 725be6c7970db37c09a3497c31899c0fa5632f79..15253e855d46800329dd579a5a5035db5b58bbfb 100644
+index 725be6c..15253e8 100644
 --- a/stripe.civix.php
 +++ b/stripe.civix.php
 @@ -133,8 +133,8 @@ function _stripe_civix_insert_navigation_menu(&$menu, $path, $item) {
@@ -3208,7 +3208,7 @@ index 725be6c7970db37c09a3497c31899c0fa5632f79..15253e855d46800329dd579a5a5035db
      ];
      return TRUE;
 diff --git a/tests/civicarrot.json b/tests/civicarrot.json
-index cd9e0a00f0d1ebcde3f9c2c5c9172b1caf29cb3a..70b9e54d80a20e17e3cb83655e1018a40af258fb 100644
+index cd9e0a0..70b9e54 100644
 --- a/tests/civicarrot.json
 +++ b/tests/civicarrot.json
 @@ -5,6 +5,11 @@
@@ -3224,7 +3224,7 @@ index cd9e0a00f0d1ebcde3f9c2c5c9172b1caf29cb3a..70b9e54d80a20e17e3cb83655e1018a4
      ]
    }
 diff --git a/tests/phpunit/CRM/Stripe/ApiTest.php b/tests/phpunit/CRM/Stripe/ApiTest.php
-index b43027cbb04831b1632b847ef88d9cb0c4e5de5e..2dabd9039f79c027caeab42e6b0238b79ec85a41 100644
+index b43027c..2dabd90 100644
 --- a/tests/phpunit/CRM/Stripe/ApiTest.php
 +++ b/tests/phpunit/CRM/Stripe/ApiTest.php
 @@ -36,7 +36,6 @@ require_once('BaseTest.php');
@@ -3246,7 +3246,7 @@ index b43027cbb04831b1632b847ef88d9cb0c4e5de5e..2dabd9039f79c027caeab42e6b0238b7
      $force = FALSE;
      return \Civi\Test::headless()
 diff --git a/tests/phpunit/CRM/Stripe/BaseTest.php b/tests/phpunit/CRM/Stripe/BaseTest.php
-index 0629f798ce284cb3b492a4d154547dd18bbb25b7..88c1e71668a7afd43748f390bec23ec263bf7355 100644
+index 0629f79..88c1e71 100644
 --- a/tests/phpunit/CRM/Stripe/BaseTest.php
 +++ b/tests/phpunit/CRM/Stripe/BaseTest.php
 @@ -23,6 +23,8 @@ define('STRIPE_PHPUNIT_TEST', 1);
@@ -3406,7 +3406,7 @@ index 0629f798ce284cb3b492a4d154547dd18bbb25b7..88c1e71668a7afd43748f390bec23ec2
  }
 -
 diff --git a/tests/phpunit/CRM/Stripe/IpnTest.php b/tests/phpunit/CRM/Stripe/IpnTest.php
-index 62dd44ca7a89f6674e0d1ede39777fbbb4c7f834..7cb9fc94610cfbb87a2af5130a4f3abeaae5dbed 100644
+index 62dd44c..7cb9fc9 100644
 --- a/tests/phpunit/CRM/Stripe/IpnTest.php
 +++ b/tests/phpunit/CRM/Stripe/IpnTest.php
 @@ -37,13 +37,6 @@ require_once('BaseTest.php');
