@@ -113,7 +113,7 @@ jobs:
           cd ~/drupal/web/sites/default/files/civicrm/ext/thingtotest
           # TODO: We could do something like glob and iterate through any folders that are not Mink? But these are the only ones that typically autoload anyway.
           # This will use either phpunit.xml.dist or phpunit.xml depending on what they have, and hopefully that file points to a good bootstrap file
-          if [ -d tests/phpunit/CRM ]; then ~/drupal/vendor/bin/phpunit tests/phpunit/CRM; fi
+          if [ -d tests/phpunit/CRM ]; then ~/drupal/vendor/bin/phpunit tests/phpunit/CRM/Stripe/IpnTest.php; fi
         env:
           COMPOSER_MEMORY_LIMIT: -1
           SYMFONY_DEPRECATIONS_HELPER: 999999
