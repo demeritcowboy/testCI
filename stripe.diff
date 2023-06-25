@@ -1874,7 +1874,7 @@ index 0000000..5202e86
 +
 +}
 diff --git a/Civi/Stripe/Webhook/Events.php b/Civi/Stripe/Webhook/Events.php
-index c08cc73..7ffedaf 100644
+index c08cc73..06203c4 100644
 --- a/Civi/Stripe/Webhook/Events.php
 +++ b/Civi/Stripe/Webhook/Events.php
 @@ -11,16 +11,30 @@
@@ -2241,7 +2241,7 @@ index c08cc73..7ffedaf 100644
            return $return;
          }
          if ($payment['trxn_id'] === $chargeID) {
-@@ -227,13 +423,477 @@ class Events {
+@@ -227,13 +423,478 @@ class Events {
        'total_amount' => $refundParams['total_amount'],
      ]);
      if (!empty($refundPayment['count'])) {
@@ -2475,10 +2475,11 @@ index c08cc73..7ffedaf 100644
 +
 +        $contributionID = $this->createNextContributionForRecur($chargeID, $invoiceID, $contributionRecur);
 +        // Now get the contribution we just created.
-+        $contribution = Contribution::get(FALSE)
++        /*$contribution = Contribution::get(FALSE)
 +          ->addWhere('id', '=', $contributionID)
 +          ->execute()
-+          ->first();
++          ->first();*/
++        $contribution = civicrm_api3('Contribution', 'get', ['id' => $contributionID, 'sequential' => 1])['values'][0] ?? NULL;
 +        if ($contribution === NULL) {
 +          throw new \Exception('contributionID = ' . var_export($contributionID, true));
 +        }
