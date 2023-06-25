@@ -1874,7 +1874,7 @@ index 0000000..5202e86
 +
 +}
 diff --git a/Civi/Stripe/Webhook/Events.php b/Civi/Stripe/Webhook/Events.php
-index c08cc73..6bdbba9 100644
+index c08cc73..7ffedaf 100644
 --- a/Civi/Stripe/Webhook/Events.php
 +++ b/Civi/Stripe/Webhook/Events.php
 @@ -11,16 +11,30 @@
@@ -2459,7 +2459,7 @@ index c08cc73..6bdbba9 100644
 +    // find it.
 +    $contribution = $this->findContribution($chargeID, $invoiceID, $subscriptionID);
 +    if (!empty($contribution) && empty($contribution['id'])) {
-+      throw new \Exception(print_r($contribution, true));
++      throw new \Exception('contribution = ' . var_export($contribution, true) . 'chargeID = ' . var_export($chargeID, true) . 'invoiceID = ' . var_export($invoiceID, true) . 'subscriptionID = ' . var_export($subscriptionID, true));
 +    }
 +    if (empty($contribution)) {
 +      // We were unable to locate the Contribution; it could be the next one in a subscription.
@@ -2480,7 +2480,7 @@ index c08cc73..6bdbba9 100644
 +          ->execute()
 +          ->first();
 +        if ($contribution === NULL) {
-+          throw new \Exception(var_export($contributionID, true));
++          throw new \Exception('contributionID = ' . var_export($contributionID, true));
 +        }
 +      }
 +    }
