@@ -1874,7 +1874,7 @@ index 0000000..5202e86
 +
 +}
 diff --git a/Civi/Stripe/Webhook/Events.php b/Civi/Stripe/Webhook/Events.php
-index c08cc73..06203c4 100644
+index c08cc73..20715d9 100644
 --- a/Civi/Stripe/Webhook/Events.php
 +++ b/Civi/Stripe/Webhook/Events.php
 @@ -11,16 +11,30 @@
@@ -2241,7 +2241,7 @@ index c08cc73..06203c4 100644
            return $return;
          }
          if ($payment['trxn_id'] === $chargeID) {
-@@ -227,13 +423,478 @@ class Events {
+@@ -227,14 +423,476 @@ class Events {
        'total_amount' => $refundParams['total_amount'],
      ]);
      if (!empty($refundPayment['count'])) {
@@ -2254,11 +2254,11 @@ index c08cc73..06203c4 100644
 -      $return->message = 'OK - refund recorded';
 +      $return->message = __FUNCTION__ . 'Refund recorded. Contribution ID: ' . $contribution['id'];
 +      $return->ok = TRUE;
-+    }
-+    $lock->release();
-+    return $return;
-+  }
-+
+     }
+     $lock->release();
+     return $return;
+   }
+ 
 +  /**
 +   * Webhook event: charge.failed
 +   * One-time donation and per invoice payment
@@ -2475,14 +2475,11 @@ index c08cc73..06203c4 100644
 +
 +        $contributionID = $this->createNextContributionForRecur($chargeID, $invoiceID, $contributionRecur);
 +        // Now get the contribution we just created.
-+        /*$contribution = Contribution::get(FALSE)
++        $contribution = Contribution::get(FALSE)
 +          ->addWhere('id', '=', $contributionID)
 +          ->execute()
-+          ->first();*/
-+        $contribution = civicrm_api3('Contribution', 'get', ['id' => $contributionID, 'sequential' => 1])['values'][0] ?? NULL;
-+        if ($contribution === NULL) {
-+          throw new \Exception('contributionID = ' . var_export($contributionID, true));
-+        }
++          ->first();
++        fprintf(STDERR, var_export($contributionID, true) . var_export($contribution, true));
 +      }
 +    }
 +    // Release the lock to find/create contribution
@@ -2527,8 +2524,8 @@ index c08cc73..06203c4 100644
 +
 +      $this->updateContributionCompleted($contributionParams);
 +      // Don't touch the contributionRecur as it's updated automatically by Contribution.completetransaction
-     }
-     $lock->release();
++    }
++    $lock->release();
 +
 +    $this->handleInstallmentsForSubscription($subscriptionID, $contributionRecur['id']);
 +    $return->message = __FUNCTION__ . ' contributionID: ' . $contribution['id'];
@@ -2719,9 +2716,10 @@ index c08cc73..06203c4 100644
 +
 +    $return->message = __FUNCTION__ . ' ignoring - not implemented';
 +    $return->ok = TRUE;
-     return $return;
-   }
- 
++    return $return;
++  }
++
+ }
 diff --git a/api/v3/Stripe/Setuptest.php b/api/v3/Stripe/Setuptest.php
 index 8412f8d..ae662cb 100644
 --- a/api/v3/Stripe/Setuptest.php
