@@ -100,6 +100,7 @@ jobs:
           composer config --no-interaction --no-plugins allow-plugins.civicrm/civicrm-asset-plugin true
           composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
           COMPOSER_MEMORY_LIMIT=-1 composer install
+          composer require psr/log:'^3' -W
       - name: Install Drupal
         run: |
           cd /home/runner/drupal10
