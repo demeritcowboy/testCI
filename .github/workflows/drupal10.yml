@@ -101,7 +101,7 @@ jobs:
           composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
           COMPOSER_MEMORY_LIMIT=-1 composer install
           composer config --unset platform
-          composer require psr/log:'^3' symfony/console:'^6' symfony/process:'^6' -W
+          composer require psr/log:'^3' symfony/console:'^6' symfony/process:'^6' stecman/symfony-console-completion:'^0.12' -W
       - name: Install Drupal
         run: |
           cd /home/runner/drupal10
