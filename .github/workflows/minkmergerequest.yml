@@ -4,6 +4,9 @@ on:
   schedule:
     # Run daily at 23:13 GMT
     - cron: '13 23 * * *'
+  workflow_dispatch:
+    branches:
+      - main
 jobs:
   phpunit:
     runs-on: ubuntu-latest
