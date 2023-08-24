@@ -1,5 +1,5 @@
 # This is just here to alert me when the patch no longer applies and I need to rebase it.
-name: Create mink merge request
+name: Test if mink PR still applies
 on:
   schedule:
     # Run daily at 23:13 GMT
