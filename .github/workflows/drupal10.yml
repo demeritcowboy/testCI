@@ -61,13 +61,6 @@ jobs:
           composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
           composer require drush/drush
           composer require --update-with-dependencies civicrm/civicrm-{core,packages,drupal-8}:$CIVIVER civicrm/civicrm-asset-plugin:'~1.1'
-      - name: phpunit9 stuff
-        run: |
-          cd /home/runner/drupal10
-          composer require yoast/phpunit-polyfills
-          cd vendor/civicrm/civicrm-core
-          curl -L -o phpunit9.diff https://github.com/civicrm/civicrm-core/compare/master...demeritcowboy:civicrm-core:phpunit9.diff
-          git apply phpunit9.diff          
       # - name: Avoid symlink issues
         # run: |
           #cd /home/runner/drupal10/vendor/civicrm
