@@ -107,11 +107,11 @@ jobs:
           cd web/sites/default
           echo 'define("CIVICRM_MAIL_LOG", "/home/runner/drupal10/web/sites/default/files/civicrm/ConfigAndLog/mail.log");' >> civicrm.settings.php
           tail civicrm.settings.php
-      #- name: Apply core PR
-      #  run: |
-      #    cd /home/runner/drupal10/vendor/civicrm/civicrm-core
-      #    curl -L -o patch.diff https://github.com/civicrm/civicrm-core/pull/26276.diff
-      #    git apply patch.diff
+      - name: Apply core PR
+        run: |
+          cd /home/runner/drupal10/vendor/civicrm/civicrm-core
+          curl -L -o patch.diff https://github.com/civicrm/civicrm-core/pull/28394.diff
+          git apply patch.diff
       - name: Run PHPUnit
         run: |
           export PATH=$PATH:$GITHUB_WORKSPACE/civicrm-cv/bin
