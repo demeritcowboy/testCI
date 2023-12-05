@@ -11,6 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true     
+      matrix:
+        include:
+          - php: '8.1'
+          - php: '8.2'
     name: Drupal 10
     services:
       mysql:
@@ -24,7 +28,7 @@ jobs:
     steps:
       - uses: shivammathur/setup-php@v2
         with:
-            php-version: 8.1
+            php-version: ${{ matrix.php }}
             extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
             coverage: none
             tools: composer:v2
