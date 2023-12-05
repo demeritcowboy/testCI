@@ -112,6 +112,11 @@ jobs:
           cd /home/runner/drupal10/vendor/civicrm/civicrm-core
           curl -L -o patch.diff https://github.com/civicrm/civicrm-core/pull/27162.diff
           git apply patch.diff
+      - name: Add adhoc tests
+          cd /home/runner/drupal10/vendor/civicrm/civicrm-core/tests/phpunit/CRM
+          mkdir Aaa
+          cd Aaa
+          cp $GITHUB_WORKSPACE/adhoctests.php AdhocTest.php
       - name: Run PHPUnit
         run: |
           export PATH=$PATH:$GITHUB_WORKSPACE/civicrm-cv/bin
