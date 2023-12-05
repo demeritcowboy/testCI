@@ -117,7 +117,7 @@ jobs:
           cd /home/runner/drupal10/vendor/civicrm/civicrm-core/tests/phpunit/CRM
           mkdir Aaa
           cd Aaa
-          cp $GITHUB_WORKSPACE/adhoctests.php AdhocTest.php
+          curl -L -o AdhocTest.php https://raw.githubusercontent.com/demeritcowboy/testCI/main/adhoctests.php
       - name: Run PHPUnit
         run: |
           export PATH=$PATH:$GITHUB_WORKSPACE/civicrm-cv/bin
