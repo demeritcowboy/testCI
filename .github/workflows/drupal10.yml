@@ -113,6 +113,7 @@ jobs:
           curl -L -o patch.diff https://github.com/civicrm/civicrm-core/pull/27162.diff
           git apply patch.diff
       - name: Add adhoc tests
+        run: |
           cd /home/runner/drupal10/vendor/civicrm/civicrm-core/tests/phpunit/CRM
           mkdir Aaa
           cd Aaa
@@ -126,8 +127,9 @@ jobs:
           export CIVICRM_UF=UnitTests
           cv ev '\Civi::settings()->set("mailing_backend", array_merge(\Civi::settings()->get("mailing_backend"), ["outBound_option" => \CRM_Mailing_Config::OUTBOUND_OPTION_MOCK]));'
           cd vendor/civicrm/civicrm-core
+          ../../bin/phpunit tests/phpunit/CRM/AdhocTest.php
           # TODO make a smarter regex - the goal is all the C's but exclude CRM_Core_Payment ones
           #../../bin/phpunit --filter '^(CRM_A|CRM_B|CRM_Campaign|CRM_Case|CRM_Contact|CRM_Contribute|CRM_Core_[A-OQ-Z]|CRM_Custom|CRM_D|CRM_[E-Z])' tests/phpunit/CRM
-          ../../bin/phpunit --filter '^(CRM_A|CRM_B|CRM_Campaign|CRM_Case|CRM_Contact|CRM_Contribute|CRM_Core_[A-OQ-Z]|CRM_Custom)' tests/phpunit/CRM         
+          #../../bin/phpunit --filter '^(CRM_A|CRM_B|CRM_Campaign|CRM_Case|CRM_Contact|CRM_Contribute|CRM_Core_[A-OQ-Z]|CRM_Custom)' tests/phpunit/CRM         
           #../../bin/phpunit tests/phpunit/Civi
           # tail -30 /home/runner/drupal10/web/sites/default/files/civicrm/ConfigAndLog/mail.log
