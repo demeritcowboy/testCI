@@ -105,7 +105,8 @@ jobs:
           cd /home/runner/drupal10
           $GITHUB_WORKSPACE/civicrm-cv/bin/cv core:install --cms-base-url=http://civi.localhost -m loadGenerated=1      
           cd web/sites/default
-          sed -i -e 's#if (!defined('"'"'CIVICRM_SMARTY3_AUTOLOAD_PATH'"'"')) {#define('"'"'CIVICRM_SMARTY3_AUTOLOAD_PATH'"'"', '"'"'/home/runner/drupal10/vendor/civicrm/civicrm-packages/smarty3/vendor/autoload.php'"'"'); if (FALSE) {#' civicrm.settings.php
+          # sed -i -e 's#if (!defined('"'"'CIVICRM_SMARTY3_AUTOLOAD_PATH'"'"')) {#define('"'"'CIVICRM_SMARTY3_AUTOLOAD_PATH'"'"', '"'"'/home/runner/drupal10/vendor/civicrm/civicrm-packages/smarty3/vendor/autoload.php'"'"'); if (FALSE) {#' civicrm.settings.php
+          sed -i -e 's#if (!defined('"'"'CIVICRM_SMARTY3_AUTOLOAD_PATH'"'"')) {#if (FALSE) {#' civicrm.settings.php
           echo 'define("CIVICRM_MAIL_LOG", "/home/runner/drupal10/web/sites/default/files/civicrm/ConfigAndLog/mail.log");' >> civicrm.settings.php
           tail civicrm.settings.php
 #      - name: Apply core PR
