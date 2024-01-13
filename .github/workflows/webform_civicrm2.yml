@@ -1,4 +1,4 @@
-name: Integration Tests
+name: webform civicrm 2
 on:  
   workflow_dispatch:
     inputs:
