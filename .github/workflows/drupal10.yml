@@ -50,7 +50,7 @@ jobs:
           #git apply drupal10civicrmcore.diff
           #cd ../..
           export COMPOSER_MEMORY_LIMIT=-1
-          composer create-project drupal/recommended-project:'~10.1.0' drupal10 --no-interaction
+          composer create-project drupal/recommended-project:'~10.2.0' drupal10 --no-interaction
           cd drupal10
           #php -r 'file_put_contents("composer.json", str_replace('"'"'"type": "composer",'"'"', '"'"'"type": "path", "url": "'"$ROOTDIR"'/drupal10staging/civicrm-core", "options": {"versions": {"civicrm/civicrm-core": "'"$CIVIVER"'"}}},{"type": "composer",'"'"', file_get_contents("composer.json")));'
           composer config extra.enable-patching true
@@ -59,7 +59,7 @@ jobs:
           composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-downloads-plugin true
           composer config --no-interaction --no-plugins allow-plugins.civicrm/civicrm-asset-plugin true
           composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
-          composer require drush/drush drupal/core-dev:'~10.1.0'
+          composer require drush/drush drupal/core-dev:'~10.2.0'
           composer require --update-with-dependencies civicrm/civicrm-{core,packages,drupal-8}:$CIVIVER civicrm/civicrm-asset-plugin:'~1.1'
       # - name: Avoid symlink issues
         # run: |
@@ -93,8 +93,6 @@ jobs:
           composer config --no-interaction --no-plugins allow-plugins.civicrm/civicrm-asset-plugin true
           composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
           COMPOSER_MEMORY_LIMIT=-1 composer install
-          # composer config --unset platform
-          # composer require psr/log:'^3' symfony/console:'^6' symfony/process:'^6' stecman/symfony-console-completion:'^0.12' -W
       - name: Install Drupal
         run: |
           cd /home/runner/drupal10
