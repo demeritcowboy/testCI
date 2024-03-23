@@ -78,8 +78,6 @@ jobs:
           cp -a $GITHUB_WORKSPACE/translations/civicrm/sql .
           ls -al l10n
           ls -al sql
-          curl -L -o patch.patch https://github.com/demeritcowboy/civicrm-core/commit/1354f4bfacab1719ffd934e41775a9772900b367.patch
-          git apply patch.patch
       - name: Download cv          
         run: |
           cd $GITHUB_WORKSPACE
