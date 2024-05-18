@@ -59,6 +59,20 @@ jobs:
             restore-keys: ${{ runner.os }}-composer-
       - name: Setup problem matchers for PHPUnit
         run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+      - name: Create working copies of civi repos
+        run: |          
+          cd $GITHUB_WORKSPACE/drupal11staging
+          git clone --depth 1 https://github.com/civicrm/civicrm-core.git
+          cd civicrm-core
+          git apply ../core.diff
+          cd ..
+          git clone --depth 1 https://github.com/civicrm/civicrm-drupal-8.git
+          cd civicrm-drupal-8
+          git apply ../drupal-8.diff
+          cd ..
+          git clone --depth 1 https://github.com/civicrm/composer-compile-lib.git
+          cd composer-compile-lib
+          git apply ../compile-lib.diff          
       - name: Download Drupal
         run: |
           COMPOSER_MEMORY_LIMIT=-1 composer create-project drupal/recommended-project:${{ matrix.drupal }} ~/drupal --no-interaction --no-install
@@ -80,20 +94,6 @@ jobs:
           composer install --no-interaction
           # composer config repositories.0 composer https://packages.drupal.org/8
           COMPOSER_MEMORY_LIMIT=-1 composer require drupal/core-dev-pinned:${{ matrix.drupal }}
-      - name: Create working copies of civi repos
-        run: |          
-          cd $GITHUB_WORKSPACE/drupal11staging
-          git clone --depth 1 https://github.com/civicrm/civicrm-core.git
-          cd civicrm-core
-          git apply ../core.diff
-          cd ..
-          git clone --depth 1 https://github.com/civicrm/civicrm-drupal-8.git
-          cd civicrm-drupal-8
-          git apply ../drupal-8.diff
-          cd ..
-          git clone --depth 1 https://github.com/civicrm/composer-compile-lib.git
-          cd composer-compile-lib
-          git apply ../compile-lib.diff          
       - name: Download CiviCRM ${{ matrix.civicrm }}
         run: |
           cd ~/drupal
