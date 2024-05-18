@@ -1,6 +1,6 @@
-diff --git a/composer.json.orig b/composer.json
+diff --git a/composer.json b/composer.json
 index 4e37a10..b9b4cd1 100644
---- a/composer.json.orig
+--- a/composer.json
 +++ b/composer.json
 @@ -9,16 +9,46 @@
          "chat": "https://www.drupal.org/node/314178"
