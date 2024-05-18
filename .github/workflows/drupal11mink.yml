@@ -62,6 +62,7 @@ jobs:
         run: |
           COMPOSER_MEMORY_LIMIT=-1 composer create-project drupal/recommended-project:${{ matrix.drupal }} ~/drupal --no-interaction --no-install
           cd ~/drupal
+          git apply $GITHUB_WORKSPACE/drupal11staging/composer.json.diff
           composer config extra.enable-patching true
           composer config extra.compile-mode all
           composer config minimum-stability dev
