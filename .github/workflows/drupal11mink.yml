@@ -36,6 +36,7 @@ jobs:
         image: mariadb:10.6
         env:
           MARIADB_ALLOW_EMPTY_PASSWORD: yes
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
           MARIADB_DATABASE: db
         ports:
           - 3306
