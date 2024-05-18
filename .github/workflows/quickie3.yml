@@ -6,6 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     name: quick test
     steps:
+      - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
           php-version: 7.4
