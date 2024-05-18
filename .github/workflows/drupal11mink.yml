@@ -122,21 +122,22 @@ jobs:
         run: |
           git config --global user.email "civicarrot@gmail.com"
           git config --global user.name "CiviCARROT"
-      - name: Check if PR has closed early
-        if: ${{ github.event.inputs.prurl != 0 }}
-        run: |
-          # Check if the PR is still open since the process started, e.g. a rebase just before merge.
-          prurl=${{ github.event.inputs.prurl }}
-          temp1=${prurl%/-/merge_requests/*}
-          projectname=${temp1#https://*/}
-          # close enough?
-          urlencoded=${projectname//\//%2F}
-          domain=${temp1%/$projectname}
-          mrid=${prurl##*/}
-          mrstate=`curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" ${domain}/api/v4/projects/${urlencoded}/merge_requests/${mrid} | jq -r .state`
-          if [ "$mrstate" != "opened" ]; then
-            echo "EXITEARLY=y" >> $GITHUB_ENV
-          fi
+      # This won't work here because we don't have an api key
+      #- name: Check if PR has closed early
+      #  if: ${{ github.event.inputs.prurl != 0 }}
+      #  run: |
+      #    # Check if the PR is still open since the process started, e.g. a rebase just before merge.
+      #    prurl=${{ github.event.inputs.prurl }}
+      #    temp1=${prurl%/-/merge_requests/*}
+      #    projectname=${temp1#https://*/}
+      #    # close enough?
+      #    urlencoded=${projectname//\//%2F}
+      #    domain=${temp1%/$projectname}
+      #    mrid=${prurl##*/}
+      #    mrstate=`curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" ${domain}/api/v4/projects/${urlencoded}/merge_requests/${mrid} | jq -r .state`
+      #    if [ "$mrstate" != "opened" ]; then
+      #      echo "EXITEARLY=y" >> $GITHUB_ENV
+      #    fi
       - name: Apply PR
         if: ${{ (github.event.inputs.prurl != 0) && (env.EXITEARLY != 'y') }}
         run: |
