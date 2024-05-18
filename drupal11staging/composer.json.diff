@@ -1,0 +1,39 @@
+diff --git a/composer.json.orig b/composer.json
+index 4e37a10..b9b4cd1 100644
+--- a/composer.json.orig
++++ b/composer.json
+@@ -9,16 +9,46 @@
+         "chat": "https://www.drupal.org/node/314178"
+     },
+     "repositories": [
++        {
++            "type": "path",
++            "url": "/home/runner/work/testCI/testCI/drupal11staging/civicrm-core",
++            "options": {
++                "symlink": false
++            }
++        },
++        {
++            "type": "path",
++            "url": "/home/runner/work/testCI/testCI/drupal11staging/civicrm-drupal-8",
++            "options": {
++                "symlink": false
++            }
++        },
++        {
++            "type": "path",
++            "url": "/home/runner/work/testCI/testCI/drupal11staging/composer-compile-lib",
++            "options": {
++                "symlink": false
++            }
++        },
+         {
+             "type": "composer",
+             "url": "https://packages.drupal.org/8"
++        },
++        {
++            "type": "composer",
++            "url": "https://packagist.org"
+         }
+     ],
+     "require": {
