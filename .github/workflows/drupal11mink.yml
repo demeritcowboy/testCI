@@ -51,7 +51,7 @@ jobs:
             tools: composer:v2
       - name: something
         run: |
-          dpkg -l google-chrome
+          dpkg -l google-chrome-stable
           exit -1
       - name: Get composer cache directory
         id: composercache
