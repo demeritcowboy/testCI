@@ -174,7 +174,7 @@ jobs:
       - name: Run PHPUnit
         if: ${{ env.EXITEARLY != 'y' }}
         run: |
-          mkdir $BROWSERTEST_OUTPUT_DIRECTORY
+          mkdir -p $BROWSERTEST_OUTPUT_DIRECTORY
           cd ~/drupal/web/sites/default/files/civicrm/ext/thingtotest
           # The xml config file should have a bootstrap attribute pointing to a proper bootstrap file, which needs to be similar to drupal's test bootstrap file.
           ~/drupal/vendor/bin/phpunit -c ~/drupal/web/sites/default/files/civicrm/ext/thingtotest/phpunit.mink.xml.dist ~/drupal/web/sites/default/files/civicrm/ext/thingtotest/tests/phpunit/Mink
