@@ -51,7 +51,7 @@ jobs:
             tools: composer:v2
       - name: something
         run: |
-          apt list google-chrome
+          apt-show-versions google-chrome
           exit -1
       - name: Get composer cache directory
         id: composercache
