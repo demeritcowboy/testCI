@@ -157,7 +157,7 @@ jobs:
       - name: Run PHPUnit
         if: ${{ env.EXITEARLY != 'y' }}
         run: |
-          mkdir $BROWSERTEST_OUTPUT_DIRECTORY
+          mkdir -p $BROWSERTEST_OUTPUT_DIRECTORY
           cd ~/drupal/web/sites/default/files/civicrm/ext/thingtotest
           # The xml config file should have a bootstrap attribute pointing to a proper bootstrap file, which needs to be similar to drupal's test bootstrap file.
           ~/drupal/vendor/bin/phpunit -c ~/drupal/web/sites/default/files/civicrm/ext/thingtotest/phpunit.mink.xml.dist ~/drupal/web/sites/default/files/civicrm/ext/thingtotest/tests/phpunit/Mink
@@ -166,8 +166,8 @@ jobs:
           DEV_EXTENSION_DIR: /home/runner/drupal/web/sites/default/files/civicrm/ext
           SIMPLETEST_DB: mysql://root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db
           SIMPLETEST_BASE_URL: http://127.0.0.1:8080
-          MINK_DRIVER_ARGS_WEBDRIVER: '["chrome", {"browserName":"chrome","chromeOptions":{"args":["--disable-gpu", "--no-sandbox", "--headless"]}}, "http://127.0.0.1:9515"]'
-          BROWSERTEST_OUTPUT_DIRECTORY: '${{ runner.temp }}/browser_output'
+          MINK_DRIVER_ARGS_WEBDRIVER: '["chrome", {"browserName":"chrome","goog:chromeOptions":{"args":["--disable-gpu", "--no-sandbox", "--headless"]}}, "http://127.0.0.1:9515"]'
+          BROWSERTEST_OUTPUT_DIRECTORY: 'home/runner/drupal/web/sites/simpletest/browser_output'
       - name: Helper to make unique name for upload
         run: |
           # doing this on multiple lines to avoid quote-hell
