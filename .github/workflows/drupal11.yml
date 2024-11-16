@@ -1,0 +1,122 @@
+name: Drupal 11 install
+on:
+#  schedule:
+    # Run daily at 06:13 GMT
+#    - cron: '13 06 * * *'
+  workflow_dispatch:
+    branches:
+      - main
+jobs:
+  installdrupal11:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true     
+    name: Drupal 11
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: db
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - uses: shivammathur/setup-php@v2
+        with:
+            php-version: 8.3
+            extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
+            coverage: none
+            tools: composer:v2
+        env:
+          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: turkish support
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install language-pack-tr
+      - name: Install sendmail
+        run: |
+          sudo apt-get install sendmail
+      - name: do it
+        run: |
+          CIVIVER=dev-master
+          ROOTDIR=/home/runner
+          cd $ROOTDIR
+          export COMPOSER_MEMORY_LIMIT=-1
+          composer create-project drupal/recommended-project:'^11' drupal11 --no-interaction
+          cd drupal11
+          composer config extra.enable-patching true
+          composer config extra.compile-mode all
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-compile-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-downloads-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/civicrm-asset-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
+          composer require drush/drush drupal/core-dev:'^11'
+          composer require --update-with-dependencies civicrm/civicrm-{core,packages,drupal-8}:$CIVIVER civicrm/civicrm-asset-plugin:'~1.1'
+      - name: Install translations
+        # some unit tests fail without it
+        run: |
+          mkdir $GITHUB_WORKSPACE/translations
+          cd $GITHUB_WORKSPACE/translations          
+          curl -L -o translations.tgz https://download.civicrm.org/latest/civicrm-NIGHTLY-l10n.tar.gz
+          tar xzf translations.tgz
+          cd /home/runner/drupal11/vendor/civicrm/civicrm-core
+          cp -a $GITHUB_WORKSPACE/translations/civicrm/l10n .
+          cp -a $GITHUB_WORKSPACE/translations/civicrm/sql .
+          ls -al l10n
+          ls -al sql
+      - name: Download cv          
+        run: |
+          cd $GITHUB_WORKSPACE
+          git clone https://github.com/civicrm/cv.git civicrm-cv
+          cd civicrm-cv
+          # downloads-plugin is locked at 2.1 but that doesn't work with composer v2
+          rm composer.lock
+          composer config --no-interaction --no-plugins allow-plugins.composer/installers true
+          composer config --no-interaction --no-plugins allow-plugins.drupal/core-composer-scaffold true
+          composer config --no-interaction --no-plugins allow-plugins.drupal/core-project-message true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-compile-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-downloads-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/civicrm-asset-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
+          COMPOSER_MEMORY_LIMIT=-1 composer install
+      - name: Install Drupal
+        run: |
+          cd /home/runner/drupal11
+          ./vendor/drush/drush/drush -y -l http://civi.localhost site-install standard --db-url='mysql://root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db' --site-name=TestCivi --account-pass=admin
+          chmod +w web/sites/default
+      - name: Install CiviCRM
+        run: |
+          cd /home/runner/drupal11
+          $GITHUB_WORKSPACE/civicrm-cv/bin/cv -vvv core:install --cms-base-url=http://civi.localhost -m loadGenerated=1      
+          cd web/sites/default
+          echo 'define("CIVICRM_MAIL_LOG", "/home/runner/drupal11/web/sites/default/files/civicrm/ConfigAndLog/mail.log");' >> civicrm.settings.php
+          tail civicrm.settings.php
+#      - name: Apply core PR
+#        run: |
+#          cd /home/runner/drupal11/vendor/civicrm/civicrm-core
+#          curl -L -o patch.diff https://github.com/civicrm/civicrm-core/pull/27162.diff
+#          git apply patch.diff
+      - name: Add adhoc tests
+        run: |
+          cd /home/runner/drupal11/vendor/civicrm/civicrm-core/tests/phpunit/CRM
+          mkdir Aaa
+          cd Aaa
+          curl -L -o AdhocTest.php https://raw.githubusercontent.com/demeritcowboy/testCI/main/adhoctests.php
+      - name: Run PHPUnit
+        if: false
+        run: |
+          export PATH=$PATH:$GITHUB_WORKSPACE/civicrm-cv/bin
+          cd /home/runner/drupal11
+          cv vars:fill
+          sed -i -e 's#dbUser:dbPass@dbHost/dbName#root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db#' ~/.cv.json
+          export CIVICRM_UF=UnitTests
+          cv ev '\Civi::settings()->set("mailing_backend", array_merge(\Civi::settings()->get("mailing_backend"), ["outBound_option" => \CRM_Mailing_Config::OUTBOUND_OPTION_MOCK]));'
+          cv ev 'echo "Smarty version is: " . CRM_Core_Smarty::singleton()->getVersion() . "\n";'
+          cd vendor/civicrm/civicrm-core
+          # TODO make a smarter regex - the goal is all the C's but exclude CRM_Core_Payment ones
+          #../../bin/phpunit --filter '^(CRM_A|CRM_B|CRM_Campaign|CRM_Case|CRM_Contact|CRM_Contribute|CRM_Core_[A-OQ-Z]|CRM_Custom|CRM_D|CRM_[E-Z])' tests/phpunit/CRM
+          ../../bin/phpunit --filter '^(CRM_A|CRM_B|CRM_Campaign|CRM_Case|CRM_Contact|CRM_Contribute|CRM_Core_[A-OQ-Z]|CRM_Custom)' tests/phpunit/CRM
+          #../../bin/phpunit --filter '^CRM_Contact_Page' tests/phpunit/CRM         
+          #../../bin/phpunit tests/phpunit/Civi
+          # tail -30 /home/runner/drupal11/web/sites/default/files/civicrm/ConfigAndLog/mail.log
