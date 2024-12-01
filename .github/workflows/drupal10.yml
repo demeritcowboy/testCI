@@ -55,6 +55,7 @@ jobs:
           #php -r 'file_put_contents("composer.json", str_replace('"'"'"type": "composer",'"'"', '"'"'"type": "path", "url": "'"$ROOTDIR"'/drupal10staging/civicrm-core", "options": {"versions": {"civicrm/civicrm-core": "'"$CIVIVER"'"}}},{"type": "composer",'"'"', file_get_contents("composer.json")));'
           composer config extra.enable-patching true
           composer config extra.compile-mode all
+          composer config 'preferred-install.civicrm/*' 'source'
           composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-compile-plugin true
           composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-downloads-plugin true
           composer config --no-interaction --no-plugins allow-plugins.civicrm/civicrm-asset-plugin true
