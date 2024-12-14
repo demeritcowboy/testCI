@@ -36,7 +36,7 @@ jobs:
     name: D${{ matrix.drupal }} | Civi ${{ matrix.civicrm }} | ${{ github.event.inputs.repourl }}
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:8.0
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: db
