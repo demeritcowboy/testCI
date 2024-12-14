@@ -8,7 +8,7 @@ on:
       matrix:
         description: matrix in json format
         required: true
-        default: '{"include":[{"php-versions":"8.2","drupal":"~10.2.1","civicrm":"dev-master"}]}'
+        default: '{"include":[{"php-versions":"8.3","drupal":"~11.0.1","civicrm":"dev-master"}]}'
       prurl:
         description: PR Url
         required: false
@@ -95,8 +95,9 @@ jobs:
       - name: Download CiviCRM ${{ matrix.civicrm }}
         run: |
           cd ~/drupal
+          composer config 'preferred-install.civicrm/*' 'source'
           COMPOSER_MEMORY_LIMIT=-1 composer require civicrm/civicrm-asset-plugin:'~1.1' civicrm/civicrm-{core,packages,drupal-8}:${{ matrix.civicrm }}
-          COMPOSER_MEMORY_LIMIT=-1 composer require phpunit/phpunit:'^9.5' drush/drush
+          COMPOSER_MEMORY_LIMIT=-1 composer require phpunit/phpunit:'^10' drush/drush
       - name: Install Drupal
         run: |
           cd ~/drupal
@@ -106,8 +107,7 @@ jobs:
         run: |
           cd ~/drupal
           $GITHUB_WORKSPACE/civicrm-cv/bin/cv core:install --cms-base-url=http://civi.localhost -m loadGenerated=1
-          cd web/sites/default
-          sed -i -e 's#if (!defined('"'"'CIVICRM_SMARTY3_AUTOLOAD_PATH'"'"')) {#if (FALSE) {#' civicrm.settings.php          
+          cd web/sites/default          
       - name: Get some code to test
         if: ${{ github.event.inputs.repourl != 0 }}
         run: |
