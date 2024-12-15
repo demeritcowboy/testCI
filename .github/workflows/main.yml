@@ -164,7 +164,7 @@ jobs:
           PHPUNITARGS=--verbose
           PHPUNIT10=`~/drupal/vendor/bin/phpunit --version | cut -d ' ' -f 2 | php -r 'echo (int) version_compare(stream_get_contents(STDIN), "10", ">=");'`
           if [ "$PHPUNIT10" == "1" ]; then
-            PHPUNITARGS=--display-skipped --display-deprecations --display-phpunit-deprecations --display-errors --display-warnings --display-notices
+            PHPUNITARGS="--display-skipped --display-deprecations --display-phpunit-deprecations --display-errors --display-warnings --display-notices"
           fi
           # The full path is needed for the config file to make this work in drupal 10.2. It shouldn't be needed for the last argument, but seems to be needed in drupal 9.5.
           ~/drupal/vendor/bin/phpunit $PHPUNITARGS -c ~/drupal/web/sites/default/files/civicrm/ext/thingtotest/phpunit.mink.xml.dist ~/drupal/web/sites/default/files/civicrm/ext/thingtotest/tests/phpunit/Mink
