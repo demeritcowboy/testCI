@@ -140,10 +140,11 @@ jobs:
           urlencoded=${projectname//\//%2F}
           domain=${temp1%/$projectname}
           mrid=${prurl##*/}
-          mrstate=`curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" ${domain}/api/v4/projects/${urlencoded}/merge_requests/${mrid} | jq -r .state`
-          if [ "$mrstate" != "opened" ]; then
-            echo "EXITEARLY=y" >> $GITHUB_ENV
-          fi
+          # This doesn't work in this repo since we have no api key
+          # mrstate=`curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" ${domain}/api/v4/projects/${urlencoded}/merge_requests/${mrid} | jq -r .state`
+          #if [ "$mrstate" != "opened" ]; then
+          #  echo "EXITEARLY=y" >> $GITHUB_ENV
+          #fi
       - name: Apply PR
         if: ${{ (github.event.inputs.prurl != 0) && (env.EXITEARLY != 'y') }}
         run: |
