@@ -98,12 +98,12 @@ jobs:
           composer config 'preferred-install.civicrm/*' 'source'
           COMPOSER_MEMORY_LIMIT=-1 composer require civicrm/civicrm-asset-plugin:'~1.1' civicrm/civicrm-{core,packages,drupal-8}:${{ matrix.civicrm }}
           COMPOSER_MEMORY_LIMIT=-1 composer require phpunit/phpunit:'^10' drush/drush
-      - name: secretly replace phpunit 10 with 9
-        run: |
-          cd ~/drupal/vendor/bin
-          rm -f phpunit
-          curl -L -o phpunit https://phar.phpunit.de/phpunit-9.phar
-          chmod +x phpunit
+#      - name: secretly replace phpunit 10 with 9
+#        run: |
+#          cd ~/drupal/vendor/bin
+#          rm -f phpunit
+#          curl -L -o phpunit https://phar.phpunit.de/phpunit-9.phar
+#          chmod +x phpunit
       - name: Install Drupal
         run: |
           cd ~/drupal
