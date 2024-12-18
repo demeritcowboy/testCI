@@ -35,14 +35,23 @@ jobs:
       matrix: ${{ fromJson(github.event.inputs.matrix) }}
     name: D${{ matrix.drupal }} | Civi ${{ matrix.civicrm }} | ${{ github.event.inputs.repourl }}
     services:
+      # mysql:
+      #  image: mysql:8.0        
+      #  env:
+      #    MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      #    MYSQL_DATABASE: db
+      #  ports:
+      #    - 3306
+      #  options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       mysql:
-        image: mysql:8.0
+        image: mariadb:10.6
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-          MYSQL_DATABASE: db
+          MARIADB_ALLOW_EMPTY_PASSWORD: yes
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
+          MARIADB_DATABASE: db
         ports:
           - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=5s --health-retries=3        
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
@@ -97,13 +106,17 @@ jobs:
           cd ~/drupal
           composer config 'preferred-install.civicrm/*' 'source'
           COMPOSER_MEMORY_LIMIT=-1 composer require civicrm/civicrm-asset-plugin:'~1.1' civicrm/civicrm-{core,packages,drupal-8}:${{ matrix.civicrm }}
-          COMPOSER_MEMORY_LIMIT=-1 composer require phpunit/phpunit:'^10' drush/drush
-#      - name: secretly replace phpunit 10 with 9
-#        run: |
-#          cd ~/drupal/vendor/bin
-#          rm -f phpunit
-#          curl -L -o phpunit https://phar.phpunit.de/phpunit-9.phar
-#          chmod +x phpunit
+          COMPOSER_MEMORY_LIMIT=-1 composer require phpunit/phpunit:'^9 || ^10' drush/drush
+      #- name: Install appropriate phpunit version
+      #  run: |
+      #    PHPUNIT10=`composer show --locked --format=json drupal/core | jq '.versions[0]' | php -r 'echo (int) version_compare(stream_get_contents(STDIN), "11", ">=");'`          
+      #    if [ "$PHPUNIT10" == "1" ]; then
+      #      COMPOSER_MEMORY_LIMIT=-1 composer require phpunit/phpunit:'^10' drush/drush
+      #      echo 'PHPUNITARGS="--display-skipped --display-deprecations --display-errors --display-warnings --display-notices"' >> $GITHUB_ENV
+      #    else
+      #      COMPOSER_MEMORY_LIMIT=-1 composer require phpunit/phpunit:'^9' drush/drush
+      #      echo 'PHPUNITARGS=--verbose' >> $GITHUB_ENV
+      #    fi          
       - name: Install Drupal
         run: |
           cd ~/drupal
@@ -184,11 +197,16 @@ jobs:
           sed -i -e 's#dbUser:dbPass@dbHost/dbName#root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db#' ~/.cv.json
           export CIVICRM_UF=UnitTests
           # export CIVICRM_SETTINGS=~/drupal/web/sites/default/civicrm.settings.php
+          PHPUNITARGS=--verbose
+          PHPUNIT10=`~/drupal/vendor/bin/phpunit --version | cut -d ' ' -f 2 | php -r 'echo (int) version_compare(stream_get_contents(STDIN), "10", ">=");'`
+          if [ "$PHPUNIT10" == "1" ]; then
+            PHPUNITARGS="--display-skipped --display-deprecations --display-errors --display-warnings --display-notices"
+          fi
           cd ~/drupal/web/sites/default/files/civicrm/ext/thingtotest
           # TODO: We could do something like glob and iterate through any folders that are not Mink? But these are the only ones that typically autoload anyway.
           # This will use either phpunit.xml.dist or phpunit.xml depending on what they have, and hopefully that file points to a good bootstrap file
-          if [ -d tests/phpunit/CRM ]; then ~/drupal/vendor/bin/phpunit tests/phpunit/CRM; fi
-          if [ -d tests/phpunit/Civi ]; then ~/drupal/vendor/bin/phpunit tests/phpunit/Civi; fi
-          if [ -d tests/phpunit/api ]; then ~/drupal/vendor/bin/phpunit tests/phpunit/api; fi
+          if [ -d tests/phpunit/CRM ]; then ~/drupal/vendor/bin/phpunit $PHPUNITARGS tests/phpunit/CRM; fi
+          if [ -d tests/phpunit/Civi ]; then ~/drupal/vendor/bin/phpunit $PHPUNITARGS tests/phpunit/Civi; fi
+          if [ -d tests/phpunit/api ]; then ~/drupal/vendor/bin/phpunit $PHPUNITARGS tests/phpunit/api; fi
         env:
           COMPOSER_MEMORY_LIMIT: -1
