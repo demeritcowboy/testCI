@@ -72,7 +72,7 @@ jobs:
         run: |
           mkdir $GITHUB_WORKSPACE/translations
           cd $GITHUB_WORKSPACE/translations          
-          curl -L -o translations.tgz https://download.civicrm.org/latest/civicrm-NIGHTLY-l10n.tar.gz
+          curl -L -o translations.tgz https://download.civicrm.org/latest/civicrm-STABLE-l10n.tar.gz
           tar xzf translations.tgz
           cd /home/runner/drupal10/vendor/civicrm/civicrm-core
           cp -a $GITHUB_WORKSPACE/translations/civicrm/l10n .
