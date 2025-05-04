@@ -62,11 +62,11 @@ jobs:
           composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
           composer require drush/drush drupal/core-dev:'~10.4.0'
           composer require --update-with-dependencies civicrm/civicrm-{core,packages,drupal-8}:$CIVIVER civicrm/civicrm-asset-plugin:'~1.1'
-      # - name: Avoid symlink issues
-        # run: |
-          #cd /home/runner/drupal10/vendor/civicrm
-          #rm -f civicrm-core
-          #mv /home/runner/drupal10staging/civicrm-core .      
+      - name: Attempt to figure out intermittent fail
+        run: |
+          cd /home/runner/drupal10/vendor/civicrm/civicrm-core
+          curl -L -O https://raw.githubusercontent.com/demeritcowboy/testCI/refs/heads/main/BAOFile.diff
+          git apply BAOFile.diff
       - name: Install translations
         # some unit tests fail without it
         run: |
