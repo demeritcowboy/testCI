@@ -1,0 +1,18 @@
+diff --git a/CRM/Core/BAO/File.php b/CRM/Core/BAO/File.php
+index b206494453..fb7f3a6ba6 100644
+--- a/CRM/Core/BAO/File.php
++++ b/CRM/Core/BAO/File.php
+@@ -813,13 +813,8 @@ HEREDOC;
+    * @return bool
+    */
+   public static function validateFileHash($hash, $entityId, $fileId) {
+-    try {
+       $payload = Civi::service('crypto.jwt')->decode($hash, ['SIGN', 'WEAK_SIGN']);
+       return $payload && $payload['civi.file'] == $fileId;
+-    }
+-    catch (\Civi\Crypto\Exception\CryptoException $e) {
+-      return FALSE;
+-    }
+   }
+
+   /**
