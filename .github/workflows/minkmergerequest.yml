@@ -1,9 +1,6 @@
 # This is just here to alert me when the patch no longer applies and I need to rebase it.
 name: Test if mink PR still applies
 on:
-  schedule:
-    # Run daily at 23:13 GMT
-    - cron: '13 23 * * *'
   workflow_dispatch:
     branches:
       - main
