@@ -129,6 +129,12 @@ jobs:
           cd  ~/drupal/web/sites/default/files/civicrm/ext/thingtotest
           curl -L -o thingtopatch.patch ${{ github.event.inputs.prurl }}.patch
           git am thingtopatch.patch
+      - name: temp apply my diff
+        if: ${{ (env.EXITEARLY != 'y') }}
+        run: |
+          cd  ~/drupal/web/sites/default/files/civicrm/ext/thingtotest
+          curl -L -o thingtopatch.diff https://lab.civicrm.org/DaveD/cdntaxreceipts/-/commit/1f24609f6160b87d8efc9534ccd712e29b34cbdb.diff
+          git apply thingtopatch.diff
       - name: Apply Core PR
         if: ${{ (github.event.inputs.coreprurl != 0) && (env.EXITEARLY != 'y') }}
         run: |
