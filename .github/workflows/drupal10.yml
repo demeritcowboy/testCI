@@ -61,7 +61,7 @@ jobs:
           composer config --no-interaction --no-plugins allow-plugins.civicrm/civicrm-asset-plugin true
           composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
           composer require drush/drush drupal/core-dev:'~10.5.0'
-          composer require --update-with-dependencies civicrm/civicrm-{core,packages,drupal-8}:$CIVIVER civicrm/civicrm-asset-plugin:'~1.1' sabberworm/php-css-parser:'~8.9.0'
+          composer require --update-with-dependencies civicrm/civicrm-{core,packages,drupal-8}:$CIVIVER civicrm/civicrm-asset-plugin:'~1.1' firebase/php-jwt:'7.0.2 as 6.11.1'
       - name: Install translations
         # some unit tests fail without it
         run: |
