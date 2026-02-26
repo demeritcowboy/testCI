@@ -8,7 +8,7 @@ on:
       matrix:
         description: matrix in json format
         required: true
-        default: '{"include":[{"php-versions":"8.3","drupal":"~11.1.0","civicrm":"dev-master"}]}'
+        default: '{"include":[{"php-versions":"8.3","drupal":"^11","civicrm":"dev-master","phpunit-mink-xml":"phpunit10.mink.xml.dist"}]}'
       prurl:
         description: PR Url
         required: false
@@ -78,7 +78,7 @@ jobs:
           composer config --no-interaction --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
           composer install --no-interaction
           # composer config repositories.0 composer https://packages.drupal.org/8
-          COMPOSER_MEMORY_LIMIT=-1 composer require drupal/core-dev-pinned:${{ matrix.drupal }}
+          COMPOSER_MEMORY_LIMIT=-1 composer require -w drupal/core-dev:${{ matrix.drupal }}
       - name: Download CiviCRM ${{ matrix.civicrm }}
         run: |
           cd ~/drupal
@@ -129,12 +129,6 @@ jobs:
           cd  ~/drupal/web/sites/default/files/civicrm/ext/thingtotest
           curl -L -o thingtopatch.patch ${{ github.event.inputs.prurl }}.patch
           git am thingtopatch.patch
-      - name: temp apply my diff
-        if: ${{ (env.EXITEARLY != 'y') }}
-        run: |
-          cd  ~/drupal/web/sites/default/files/civicrm/ext/thingtotest
-          curl -L -o thingtopatch.diff https://lab.civicrm.org/DaveD/cdntaxreceipts/-/commit/1f24609f6160b87d8efc9534ccd712e29b34cbdb.diff
-          git apply thingtopatch.diff
       - name: Apply Core PR
         if: ${{ (github.event.inputs.coreprurl != 0) && (env.EXITEARLY != 'y') }}
         run: |
