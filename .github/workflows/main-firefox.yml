@@ -182,7 +182,7 @@ jobs:
           DEV_EXTENSION_DIR: /home/runner/drupal/web/sites/default/files/civicrm/ext
           SIMPLETEST_DB: mysql://root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db
           SIMPLETEST_BASE_URL: http://127.0.0.1:8080
-          MINK_DRIVER_ARGS_WEBDRIVER: '["firefox", {"browserName":"firefox"}, "http://localhost:9515/wd/hub"]'
+          MINK_DRIVER_ARGS_WEBDRIVER: '["firefox", {"browserName":"firefox"}, "http://127.0.0.1:9515"]'
           BROWSERTEST_OUTPUT_FILE: 'true'
           BROWSERTEST_OUTPUT_VERBOSE: 'false'
           BROWSERTEST_OUTPUT_DIRECTORY: '/home/runner/drupal/web/sites/simpletest/browser_output'
