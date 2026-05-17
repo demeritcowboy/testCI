@@ -90,7 +90,10 @@ jobs:
         # There's so many! They can be useful locally if running one test, but they aren't useful here and cause massive scrolling.
         run: |
           cd ~/drupal
-          DRUPAL11=`grep "const VERSION" web/core/lib/Drupal.php | cut -f 2 -d "'" | php -r 'echo (int) version_compare(stream_get_contents(STDIN), "11", ">=");'`
+          # It says there is no web/core/lib/Drupal.php - hmm
+          #DRUPAL11=`grep "const VERSION" web/core/lib/Drupal.php | cut -f 2 -d "'" | php -r 'echo (int) version_compare(stream_get_contents(STDIN), "11", ">=");'`
+          ls -al
+          DRUPAL11=1
           if [ "$DRUPAL11" == "1" ]; then
             echo "ISDRUPAL11=1" >> $GITHUB_ENV
           else
