@@ -60,7 +60,7 @@ jobs:
         run: |
           mkdir -p ~/drupal
           cd ~/drupal
-          composer require drupal/core-recommended:${{ matrix.drupal }} drupal/core-composer-scaffold:${{ matrix.drupal }} drupal/core-project-message:${{ matrix.drupal }} --no-install --no-interaction
+          composer require drupal/core-recommended:${{ matrix.drupal }} drupal/core-composer-scaffold:${{ matrix.drupal }} drupal/core-project-message:${{ matrix.drupal }} --no-update --no-interaction
           composer config extra.enable-patching true
           composer config extra.compile-mode all
           composer config minimum-stability dev
