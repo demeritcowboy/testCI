@@ -90,8 +90,7 @@ jobs:
       - name: Apply core PR
         run: |
           cd /home/runner/drupal10/vendor/civicrm/civicrm-core
-          # curl -L -o patch.diff https://github.com/civicrm/civicrm-core/pull/27162.diff
-          curl -L -o patch.diff https://github.com/demeritcowboy/civicrm-core/commit/a36ae5cf21.patch
+          curl -L -o patch.diff https://github.com/civicrm/civicrm-core/pull/36306.diff
           git apply patch.diff
       - name: Install CiviCRM
         run: |
