@@ -87,11 +87,11 @@ jobs:
           cd /home/runner/drupal10
           ./vendor/drush/drush/drush -y -l http://civi.localhost site-install standard --db-url='mysql://root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db' --site-name=TestCivi --account-pass=admin
           chmod +w web/sites/default
-      - name: Apply core PR
-        run: |
-          cd /home/runner/drupal10/vendor/civicrm/civicrm-core
-          curl -L -o patch.diff https://github.com/civicrm/civicrm-core/pull/36306.diff
-          git apply patch.diff
+      #- name: Apply core PR
+      #  run: |
+      #    cd /home/runner/drupal10/vendor/civicrm/civicrm-core
+      #    curl -L -o patch.diff https://github.com/civicrm/civicrm-core/pull/36306.diff
+      #    git apply patch.diff
       - name: Install CiviCRM
         run: |
           cd /home/runner/drupal10
