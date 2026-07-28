@@ -1,0 +1,187 @@
+name: Standalone Unit Tests
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      matrix:
+        description: matrix in json format
+        required: true
+        default: '{"include":[{"php-versions":"8.4","civicrm":"dev-master"}]}'
+      prurl:
+        description: PR Url
+        required: false
+      repourl:
+        description: Repo Url
+        required: false
+      repobranch:
+        description: Target Branch
+        required: false
+      notifyemail:
+        description: Notification email
+        required: false
+      contactid:
+        description: Civi contact id
+        required: false
+      coreprurl:
+        description: Core PR Url
+        required: false
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(github.event.inputs.matrix) }}
+    name: Civi ${{ matrix.civicrm }} | ${{ github.event.inputs.repourl }}
+    services:
+      mysql:
+        image: mariadb:10.6
+        env:
+          MARIADB_ALLOW_EMPTY_PASSWORD: yes
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: yes
+          MARIADB_DATABASE: db
+        ports:
+          - 3306
+        options: --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=5s --health-retries=3        
+    steps:
+      - uses: actions/checkout@v6
+      - uses: shivammathur/setup-php@v2
+        with:
+            php-version: ${{ matrix.php-versions }}
+            extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
+            coverage: none
+            tools: composer:v2
+      - name: Get composer cache directory
+        id: composercache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v5
+        with:
+            path: ${{ steps.composercache.outputs.dir }}
+            key: ${{ runner.os }}-${{ matrix.civicrm }}-composer-${{ hashFiles('**/composer.json') }}
+            restore-keys: ${{ runner.os }}-composer-
+      - name: Setup problem matchers for PHPUnit
+        run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+      - name: Download cv
+        run: |
+          cd $GITHUB_WORKSPACE
+          git clone https://github.com/civicrm/cv.git civicrm-cv
+          cd civicrm-cv
+          # downloads-plugin is locked at 2.1 but that doesn't work with composer v2
+          rm composer.lock
+          composer config --no-interaction --no-plugins allow-plugins.composer/installers true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-compile-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-downloads-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/civicrm-asset-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
+          COMPOSER_MEMORY_LIMIT=-1 composer install
+      - name: Download CiviCRM ${{ matrix.civicrm }}
+        run: |
+          cd ~
+          git clone --depth 1 https://github.com/civicrm/civicrm-standalone.git civi
+          cd civi
+          composer config extra.enable-patching true
+          composer config extra.compile-mode all
+          composer config minimum-stability dev
+          composer config --no-interaction --no-plugins allow-plugins.composer/installers true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-compile-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/composer-downloads-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.civicrm/civicrm-asset-plugin true
+          composer config --no-interaction --no-plugins allow-plugins.cweagans/composer-patches true
+          composer config --no-interaction --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true      
+          composer config 'preferred-install' 'dist'
+          composer config 'preferred-install.civicrm/*' 'source'
+          if [ "${{ matrix.civicrm }}" != "dev-master" ]; then
+            sed -i -e 's#"civicrm-core": "dev-master"#"civicrm-core": "{{ $matrix.civicrm }}"#' composer.json
+            sed -i -e 's#"civicrm-packages": "dev-master"#"civicrm-packages": "{{ $matrix.civicrm }}"#' composer.json
+          fi
+          composer install --no-interaction      
+          COMPOSER_MEMORY_LIMIT=-1 composer require -w phpunit/phpunit:'^9 || ^10'
+      - name: Install CiviCRM
+        run: |
+          cd ~/civi
+          $GITHUB_WORKSPACE/civicrm-cv/bin/cv core:install --url=http://civi.localhost -m loadGenerated=1 --db='mysql://root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db'
+      - name: Get some code to test
+        if: ${{ github.event.inputs.repourl != 0 }}
+        run: |
+          mkdir -p ~/civi/ext
+          cd ~/civi/ext
+          if [ "${{ github.event.inputs.repobranch }}" != "" ]; then
+            git clone -b ${{ github.event.inputs.repobranch }} ${{ github.event.inputs.repourl }} thingtotest
+          else
+            git clone ${{ github.event.inputs.repourl }} thingtotest
+          fi
+      - name: Set identity
+        # Needed for `git am`
+        run: |
+          git config --global user.email "civicarrot@gmail.com"
+          git config --global user.name "CiviCARROT"
+      - name: Check if PR has closed early
+        if: ${{ github.event.inputs.prurl != 0 }}
+        run: |
+          # Check if the PR is still open since the process started, e.g. a rebase just before merge.
+          prurl=${{ github.event.inputs.prurl }}
+          temp1=${prurl%/-/merge_requests/*}
+          projectname=${temp1#https://*/}
+          # close enough?
+          urlencoded=${projectname//\//%2F}
+          domain=${temp1%/$projectname}
+          mrid=${prurl##*/}
+          mrstate=`curl -H "Authorization: Bearer ${{secrets.LABCO_API_KEY}}" ${domain}/api/v4/projects/${urlencoded}/merge_requests/${mrid} | jq -r .state`
+          if [ "$mrstate" != "opened" ]; then
+            echo "EXITEARLY=y" >> $GITHUB_ENV
+          fi
+      - name: Apply PR
+        if: ${{ (github.event.inputs.prurl != 0) && (env.EXITEARLY != 'y') }}
+        run: |
+          cd  ~/civi/ext/thingtotest
+          curl -L -o thingtopatch.patch ${{ github.event.inputs.prurl }}.patch
+          git am thingtopatch.patch
+      - name: Apply Core PR
+        if: ${{ (github.event.inputs.coreprurl != 0) && (env.EXITEARLY != 'y') }}
+        run: |
+          cd  ~/civi/vendor/civicrm/civicrm-core
+          curl -L -o thingtopatch.diff ${{ github.event.inputs.coreprurl }}.diff
+          git apply thingtopatch.diff
+      - name: Download extension dependencies
+        if: ${{ (github.event.inputs.repourl != 0) && (env.EXITEARLY != 'y') }}
+        run: |
+          cd ~/civi/ext
+          # Allow "unapproved" extensions
+          $GITHUB_WORKSPACE/civicrm-cv/bin/cv ev '\Civi::settings()->set("ext_repo_url", "https://civicrm.org/extdir/ver={ver}|cms={uf}|ready=");'
+          $GITHUB_WORKSPACE/civicrm-cv/bin/cv ev '\Civi::settings()->set("http_timeout", 60);'
+          DEPS=`php -r '$xml = simplexml_load_file("thingtotest/info.xml"); $deps = array(); foreach ($xml->requires as $req) { foreach ($req->ext as $ext) { $deps[] = $ext; } } echo implode(" ", $deps);'`
+          if [ -n "$DEPS" ]; then
+            for e in $DEPS; do
+              # Might need to be tolerant of failure here since it's possible to have dependencies that
+              # aren't in universe and that could still get installed by the tests themselves. But this
+              # whole system is really only designed for publicly reachable repos at the moment. Also
+              # if you declare a dependency on a core extension, there's nothing to "download".
+              # By adding the `||` the exit code is the exit code of `echo`, which will be success.
+              $GITHUB_WORKSPACE/civicrm-cv/bin/cv api3 Extension.download install=0 key=$e || echo 'ignoring failure'
+            done
+          fi
+      - name: Run PHPUnit
+        if: ${{ env.EXITEARLY != 'y' }}
+        run: |
+          export PATH=$PATH:$GITHUB_WORKSPACE/civicrm-cv/bin
+          cd ~/civi
+          cv vars:fill
+          sed -i -e 's#dbUser:dbPass@dbHost/dbName#root:@127.0.0.1:${{ job.services.mysql.ports[3306] }}/db#' $XDG_CONFIG_HOME/.cv.json
+          export CIVICRM_UF=UnitTests
+          PHPUNITARGS=--verbose
+          PHPUNIT10=`~/civi/vendor/bin/phpunit --version | cut -d ' ' -f 2 | php -r 'echo (int) version_compare(stream_get_contents(STDIN), "10", ">=");'`
+          if [ "$PHPUNIT10" == "1" ]; then
+            PHPUNITARGS="--display-skipped --display-deprecations --display-errors --display-warnings --display-notices"
+          fi
+          if [ "${{ matrix.phpunit-xml }}" != "" ]; then
+            # If not specified it will try phpunit.xml.dist or phpunit.xml depending on what they have, and hopefully that file points to a good bootstrap file
+            PHPUNITARGS="$PHPUNITARGS -c ${{ matrix.phpunit-xml }}"
+          fi
+          cd ~/civi/ext/thingtotest
+          # TODO: We could do something like glob and iterate through any folders that are not Mink? But these are the only ones that typically autoload anyway.
+          if [ -d tests/phpunit/CRM ]; then ~/civi/vendor/bin/phpunit $PHPUNITARGS tests/phpunit/CRM; fi
+          if [ -d tests/phpunit/Civi ]; then ~/civi/vendor/bin/phpunit $PHPUNITARGS tests/phpunit/Civi; fi
+          if [ -d tests/phpunit/api ]; then ~/civi/vendor/bin/phpunit $PHPUNITARGS tests/phpunit/api; fi
+        env:
+          COMPOSER_MEMORY_LIMIT: -1
