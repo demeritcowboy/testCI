@@ -96,7 +96,7 @@ jobs:
             sed -i -e 's#"civicrm-packages": "dev-master"#"civicrm-packages": "{{ $matrix.civicrm }}"#' composer.json
           fi
           composer install --no-interaction      
-          COMPOSER_MEMORY_LIMIT=-1 composer require -w phpunit/phpunit:'^9 || ^10'
+          COMPOSER_MEMORY_LIMIT=-1 composer require -w phpunit/phpunit:'^9'
       - name: Install CiviCRM
         run: |
           cd ~/civi
